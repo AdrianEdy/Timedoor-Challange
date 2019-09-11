@@ -41,9 +41,6 @@
                             </label>
                         </div>
                         </div>
-                        @error('edit-image')
-                            <p class="small text-danger mt-5">{{ $message }}</p>
-                        @enderror
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -100,4 +100,8 @@ return [
         ],
     ],
 
+    'verification' => [
+        'expire' => 1440, // One day - enter as many mintues as you would like here
+    ],
+
 ];

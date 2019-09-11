@@ -12,20 +12,20 @@ class BoardController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'nullable|between:3,16',
-            'title' => 'required|between:10,32',
-            'body' => 'required|between:10,200',
-            'image' => 'image|max:1000',
-            'password' => 'nullable|numeric|digits:4'
+            'name'      => 'nullable|between:3,16',
+            'title'     => 'required|between:10,32',
+            'body'      => 'required|between:10,200',
+            'image'     => 'image|max:1000',
+            'password'  => 'nullable|numeric|digits:4'
         ]);
 
-        $board =  new Board;
-        $board->user_id = $request->user()->id;
-        $board->name = $request->name;
-        $board->title = $request->title;
-        $board->message = $request->body;
-        $image = $request->image ?? null;
-        $board->image = $image ? $image->store('image/upload', 'public') : $image;
+        $board           =  new Board;
+        $board->user_id  = $request->user()->id;
+        $board->name     = $request->name;
+        $board->title    = $request->title;
+        $board->message  = $request->body;
+        $image           = $request->image ?? null;
+        $board->image    = $image ? $image->store('image/upload', 'public') : $image;
         $board->password = Hash::make($request->password);
         $board->save();
         
@@ -34,10 +34,10 @@ class BoardController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $board = Board::find($id);
+        $board   = Board::find($id);
         $message = null;
 
-        if ($request->user()->id === $id) {
+        if ($request->user()->id ?? null === $id) {
             return response()->json($board);
         }
 
@@ -61,26 +61,26 @@ class BoardController extends Controller
     public function update(Request $request, $id)
     {
         $rules = [
-            'editName' => 'nullable|between:3,16',
+            'editName'  => 'nullable|between:3,16',
             'editTitle' => 'required|between:10,32',
-            'editBody' => 'required|between:10,200',
+            'editBody'  => 'required|between:10,200',
             'editImage' => 'image|max:1000'
         ];
 
         $messages = [
-            'editName.between' => [
+            'editName.between'   => [
                 'string' => 'The name must be between :min and :max characters.'
             ],
             'editTitle.required' => 'The title field is required.',
-            'editTitle.between' => [
+            'editTitle.between'  => [
                 'string' => 'The title must be between :min and :max characters.'
             ],
-            'editBody.required' => 'The body field is required.',
-            'editBody.between' => [
+            'editBody.required'  => 'The body field is required.',
+            'editBody.between'   => [
                 'string' => 'The body must be between :min and :max characters.'
             ],
-            'editImage.image' => 'The image must be an image.',
-            'editImage.max' => [
+            'editImage.image'    => 'The image must be an image.',
+            'editImage.max'      => [
                 'file' => 'The image may not be greater than :max Kilobytes.'
             ]
         ];
@@ -110,14 +110,14 @@ class BoardController extends Controller
 
     public function delete(Request $request, $id)
     {
-        $board = Board::find($id);
+        $board   = Board::find($id);
         $message = null;
         
         $request->validate([
             'password' => 'nullable|numeric|digits:4'
         ]);
 
-        if ($request->user()->id === $id) {
+        if ($request->user()->id ?? null === $id) {
             return response()->json($board);
         }
         

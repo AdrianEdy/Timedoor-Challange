@@ -19,7 +19,7 @@
                     <input type="text" class="form-control @error('name') is-invalid @enderror" name="name"
                     value="{{ Auth::user()->name ?? old('name') }}">
                     @error('name')
-                    <p class="small text-danger mt-5">{{ $message }}</p>
+                        <p class="small text-danger mt-5">{{ $message }}</p>
                     @enderror
                 </div>
                 <div class="form-group">
@@ -27,7 +27,7 @@
                     <input type="text" class="form-control @error('title') is-invalid @enderror" name="title"
                     value="{{ old('title') }}">
                     @error('title')
-                    <p class="small text-danger mt-5">{{ $message }}</p>
+                        <p class="small text-danger mt-5">{{ $message }}</p>
                     @enderror
                 </div>
                 <div class="form-group">
@@ -35,7 +35,7 @@
                     <textarea rows="5" class="form-control @error('body') is-invalid @enderror" 
                     name="body">{{ old('body') }}</textarea>
                     @error('body')
-                    <p class="small text-danger mt-5">{{ $message }}</p>
+                        <p class="small text-danger mt-5">{{ $message }}</p>
                     @enderror
                 </div>
                 <div class="form-group">
@@ -58,7 +58,7 @@
                         <label>Password</label>
                         <input type="password" class="form-control @error('password') is-invalid @enderror" name="password">
                         @error('password')
-                        <p class="small text-danger mt-5">{{ $message }}</p>
+                            <p class="small text-danger mt-5">{{ $message }}</p>
                         @enderror
                     </div>
                 @endguest
@@ -79,11 +79,14 @@
                     </div>
                     </div>
                     <h4 class="mb-20"> 
-                        @if(is_null($board->name)) No Name
-                        @else {{$board->name}}
+                        @if(is_null($board->name)) 
+                            No Name
+                        @else 
+                            {{$board->name}}
                         @endif
                     <span class="text-id">
-                        @if($board->user_id) [ID:{{$board->user_id}}]
+                        @if($board->user_id) 
+                            [ID:{{$board->user_id}}]
                         @endif
                     </span></h4>
                     <p>
@@ -114,15 +117,12 @@
                     </form>
                 </div>
                 @endforeach
-
                 {{ $boards->links('template/pagination') }}
-                
             </div>
             </div>
         </div>
         </div>
     </main>
-
     <footer>
         @include('template/footer')
     </footer>

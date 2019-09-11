@@ -11,14 +11,10 @@
 |
 */
 
-// Auth::routes();
-// Auth::routes(['verify' => true]);
-
-// Route::post('do-register', 'Auth\RegisterController@confirmRegister')->name('confirm.register');
+// Auth routes
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout')->name('logout');
-
 
 Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
 Route::post('confirm-register', 'Auth\RegisterController@confirmRegister')->name('confirm.register');
@@ -26,9 +22,8 @@ Route::post('save-register', 'Auth\RegisterController@register')->name('save.reg
 
 Route::get('email/verify', 'Auth\VerificationController@show')->name('verification.notice');
 Route::get('email/verify/{id}', 'Auth\VerificationController@verify')->name('verification.verify');
-Route::get('email/resend', 'Auth\VerificationController@resend')->name('verification.resend');
 
-
+//Other page routes
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/save', 'HomeController@create');
 Route::post('/store', 'BoardController@store')->name('store');
@@ -36,9 +31,3 @@ Route::post('/delete/{id}', 'BoardController@delete')->name('delete');
 Route::get('/destroy/{id}', 'BoardController@destroy')->name('destroy');
 Route::post('/edit/{id}', 'BoardController@edit')->name('edit');
 Route::post('/update/{id}', 'BoardController@update')->name('update');
-
-Route::get('/tes/{id}', 'BoardController@tes')->name('tes');
-
-Route::get('/ajax', 'HomeController@ajax');
-Route::post('/ajax/post', 'HomeController@sentAjax')->name('sentAjax');
-
