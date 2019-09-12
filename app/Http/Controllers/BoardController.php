@@ -24,9 +24,8 @@ class BoardController extends Controller
         $board->name     = $request->name;
         $board->title    = $request->title;
         $board->message  = $request->body;
-        $image           = $request->image ?? null;
-        $board->image    = $image ? $image->store('image/upload', 'public') : $image;
-        $board->password = Hash::make($request->password);
+        $board->image    = $request->image ? $request->image->store('image/upload', 'public') : null;
+        $board->password = $request->password ? Hash::make($request->password) : null;
         $board->save();
         
         return redirect('/');
