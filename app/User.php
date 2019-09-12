@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\EmailNotification;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -40,5 +41,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function boards()
     {
         return $this->hasMany('App\Board');
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new App\Notifications\EmailNotification);
     }
 }
