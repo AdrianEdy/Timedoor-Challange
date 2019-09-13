@@ -1,13 +1,14 @@
 <?php
 
-namespace App\EmailNotifications;
+namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Auth\Notifications\VerifyEmail;
 
-class EmailNotification extends Notification
+class EmailNotification extends VerifyEmail
 {
     use Queueable;
 
@@ -40,10 +41,25 @@ class EmailNotification extends Notification
      */
     public function toMail($notifiable)
     {
+        // return (new MailMessage)
+        //             ->line('The introduction to the notification.')
+        //             ->action('Notification Action', url('/'))
+        //             ->line('Thank you for using our application!');
+
+        //
+        $verificationUrl = $this->verificationUrl($notifiable);
+
+        if (static::$toMailCallback) {
+            return call_user_func(static::$toMailCallback, $notifiable, $verificationUrl);
+        }
+
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->subject('Verify Email Address')
+            ->line('Hi, Mr. '. $notifiable->name)
+            ->line('To enable your account, please click in the following line or' 
+            . ' copy it onto the address bar of your favourite browser.')
+            ->action('Verify Email Address', $verificationUrl)
+            ->line('Please click within 24 hours.');
     }
 
     /**
