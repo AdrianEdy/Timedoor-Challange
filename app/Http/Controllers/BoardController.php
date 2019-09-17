@@ -24,9 +24,11 @@ class BoardController extends Controller
         $board->name     = $request->name;
         $board->title    = $request->title;
         $board->message  = $request->body;
-        $board->image    = $request->image ? $request->image->store('image/upload', 'public') : null;
+        $imageName       = uniqid('img_') . '.' . $request->image->getClientOriginalExtension();
+        $board->image    = $request->image ? $imageName : null;
         $board->password = $request->password ? Hash::make($request->password) : null;
         $board->save();
+        $request->image->storeAs('image/board', $imageName, 'public');
         
         return redirect('/');
     }
@@ -88,15 +90,16 @@ class BoardController extends Controller
 
         $board = Board::find($id);
         if ($request->has('deleteImage')) {
-            Storage::delete("public/{$board->image}");
+            Storage::delete("public/image/board/{$board->image}");
             Board::where('id', $id)->update([
                 'image' => null
             ]);
         } else {
-            $image = $request->editImage ?? false;
+            $imageName = uniqid('img_') . '.' . $request->editImage->getClientOriginalExtension();
             Board::where('id', $id)->update([
-                'image' => $image ? $image->store('image/upload', 'public') : $board->image
+                'image' => $request->editImage ? $imageName : $board->image
             ]);
+            $request->editImage->storeAs('image/board', $imageName, 'public');
         }
 
         Board::where('id', $id)->update([
@@ -136,7 +139,7 @@ class BoardController extends Controller
     public function destroy($id)
     {
         $board = Board::find($id);
-        Storage::delete("public/{$board->image}");
+        Storage::delete("public/image/board/{$board->image}");
         Board::destroy($id);
         return back();
     }

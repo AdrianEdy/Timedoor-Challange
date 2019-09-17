@@ -21,8 +21,8 @@ $(document).on('change', '.btn-file :file', function() {
     // EDIT MODAL
     $('.edit-board-btn').click(function(e){
         e.preventDefault();
-        var form = $(this).parents('.form-password'),
-            id = $(this).data('id'),
+        var form     = $(this).parents('.form-password'),
+            id       = $(this).data('id'),
             password = form.find(':password');
         
         $.ajax({
@@ -44,7 +44,8 @@ $(document).on('change', '.btn-file :file', function() {
               $('#editModal').find('.edit-title').val(result.title);
               $('#editModal').find('.edit-name').val(result.name);
               $('#editModal').find('.edit-body').val(result.message);
-              $('#editModal').find('.edit-image').attr('src', '/storage/' + (result.image || 'image/image-not-available.jpg'));
+              $('#editModal').find('.edit-image').attr('src', '/storage/image/' + 
+                (result.image ? 'board/' + result.image : 'image-not-available.jpg'));
               $('#editModal').find('#submit-password').val(result.submitPass);
               $('#editModal').find('#update-btn').attr('data-id', id);
               $('#editModal').modal('toggle');

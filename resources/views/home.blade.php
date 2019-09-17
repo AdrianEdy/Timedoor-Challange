@@ -93,8 +93,8 @@
                     {{ $board->message }}
                     </p>
                     <div class="img-box my-10">
-                    @if (!is_null($board->image) && file_exists('storage/' . $board->image))
-                        <img class="img-responsive img-post" src="{{ url('storage/' . $board->image) }}" alt="image">
+                    @if (!is_null($board->image) && file_exists('storage/image/board/' . $board->image))
+                        <img class="img-responsive img-post" src="{{ url('storage/image/board/' . $board->image) }}" alt="image">
                     @else
                         <img class="img-responsive img-post" src="{{ url('storage/image/image-not-available.jpg') }}" alt="image">
                     @endif
