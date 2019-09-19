@@ -86,10 +86,6 @@ class BoardController extends Controller
         $boardPassword = Board::where('id', $id)->value('password');
         $check         = $this->checkPassword($boardPassword, $request->password, 'edit');
         
-        if (!is_null($check['passErr'])) {
-            return response()->json();
-        }
-        
         if ($request->has('deleteImage')) {
             Storage::delete("public/image/board/{$board->image}");
             Board::where('id', $id)->update([
