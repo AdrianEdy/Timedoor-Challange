@@ -99,7 +99,7 @@
                         <img class="img-responsive img-post" src="{{ url('storage/image/image-not-available.jpg') }}" alt="image">
                     @endif
                     </div>
-                    <form class="form-inline mt-50 form-password">
+                    <form class="form-inline mt-50 form-manage">
                     @guest
                         @if(!$board->user_id)
                             <div class="form-group mx-sm-3 mb-2">

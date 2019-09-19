@@ -20,43 +20,54 @@ class BoardController extends Controller
         ]);
 
         $board           =  new Board;
-        $board->user_id  = $request->user()->id;
+        $board->user_id  = $request->user()->id ?? null;
         $board->name     = $request->name;
         $board->title    = $request->title;
         $board->message  = $request->body;
-        $imageName       = uniqid('img_') . '.' . $request->image->getClientOriginalExtension();
+        $imageName       = $request->image ? 
+            uniqid('img_') . '.' . $request->image->getClientOriginalExtension() : null;
         $board->image    = $request->image ? $imageName : null;
         $board->password = $request->password ? Hash::make($request->password) : null;
         $board->save();
-        $request->image->storeAs('image/board', $imageName, 'public');
+
+        if ($request->image) {
+            $request->image->storeAs('image/board', $imageName, 'public');
+        }
         
         return redirect('/');
     }
 
     public function edit(Request $request, $id)
     {
-        $board   = Board::find($id);
-        $message = null;
+        $board         = Board::find($id, ['id', 'name', 'title', 'message', 'image']);
+        $boardPassword = Board::where('id', $id)->value('password');
+        $check         = $this->checkPassword($boardPassword, $request->password, 'edit');
 
         if ($request->user()->id ?? null === $id) {
-            return response()->json($board);
+            return response()->json(['board' => $board]);
         }
+        
+        $check = $this->checkPassword($boardPassword, $request->password, 'edit');
 
-        $request->validate([
-            'password' => 'nullable|numeric|digits:4'
-        ]);
-        
-        if (Hash::check($request->password, $board->password)) {
-            return response()->json($board);
+        $returnData = ['board' => $board, 'passErr' => $check['passErr'], 'message' => $check['message']];
+        return response()->json($returnData);
+    }
+
+    private function checkPassword($boardPassword, $requestPassword, $action)
+    {
+        $passErr = null;
+        $message = null;
+        if (is_null($boardPassword)) {
+            $message = "This message can't " . $action 
+                     .", because this message has not been set password";
+            $passErr = 'not set';
         } else {
-            if (is_null($board->password)) {
-                $message = "This message can't edit, because this message has not been set password";
-            } else {
+            if (!Hash::check($requestPassword, $boardPassword)) {
                 $message = "The password you entered do not match, Please try again";
-            }
+                $passErr = 'wrong';
+            } 
         }
-        
-        return response()->json(['password' => false, 'message' => $message]);
+        return ['passErr' => $passErr, 'message' => $message];
     }
 
     public function update(Request $request, $id)
@@ -88,18 +99,28 @@ class BoardController extends Controller
 
         $request->validate($rules, $messages);
 
-        $board = Board::find($id);
+        $board         = Board::find($id, ['id', 'name', 'title', 'message', 'image']);
+        $boardPassword = Board::where('id', $id)->value('password');
+        $check         = $this->checkPassword($boardPassword, $request->password, 'edit');
+        
+        if (!is_null($check['passErr'])) {
+            return response()->json();
+        }
+        
         if ($request->has('deleteImage')) {
             Storage::delete("public/image/board/{$board->image}");
             Board::where('id', $id)->update([
                 'image' => null
             ]);
         } else {
-            $imageName = uniqid('img_') . '.' . $request->editImage->getClientOriginalExtension();
+            $imageName = $request->editImage ? 
+                uniqid('img_') . '.' . $request->editImage->getClientOriginalExtension() : null;
             Board::where('id', $id)->update([
                 'image' => $request->editImage ? $imageName : $board->image
             ]);
-            $request->editImage->storeAs('image/board', $imageName, 'public');
+            if ($request->editImage) {
+                $request->editImage->storeAs('image/board', $imageName, 'public');
+            }
         }
 
         Board::where('id', $id)->update([
