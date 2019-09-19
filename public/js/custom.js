@@ -115,9 +115,13 @@ $(document).on('change', '.btn-file :file', function() {
     // DELETE MODAL
     $('.delete-board-btn').click(function(e){
         e.preventDefault();
-        var form = $(this).parents('.form-password'),
-            id = $(this).data('id'),
-            password = form.find(':password');
+        var formPass  = $(this).parents('.form-manage'),
+            id        = $(this).data('id'),
+            password  = formPass.find(':password'),
+            modal = $('#deleteModal'),
+            form  = $('#form-delete');   
+
+        form.find(".form-control:not(.modal-password)").attr('readonly', true);
 
         $.ajax({
           headers: {
@@ -130,20 +134,26 @@ $(document).on('change', '.btn-file :file', function() {
           },
           success: function(result){
             form.find('.error').remove();
-            if (result.password == false) {
-              form.append('<p class="small text-danger mt-5 error">' + result.message + '</p>');
+            form.find("#destroy-btn").removeClass('hidden');
+            form.find(".delete-board-btn").removeClass('hidden');
+            form.find('.modal-password').parent().removeClass('hidden');
+            form.find(".delete-board-btn").attr('data-id', id);
+            if (result.passErr) {
+              form.find("#destroy-btn").addClass('hidden');
+              form.prepend('<p class="small text-danger mt-5 error text-center">' + result.message + '</p>');
+              if (result.passErr == 'not set') {
+                form.find('.modal-password').parent().addClass('hidden');
+                form.find(".delete-board-btn").addClass('hidden');
+                form.find("#destroy-btn").addClass('hidden');
+              } 
+              password.val(null);
             } else {
-              $('#deleteModal').find('.modal-board-delete-btn').attr('href', '/destroy/'+id);S
-              $('#deleteModal').modal('toggle');
-            }
-          },
-          error: function(err){
-            if (err.status == 422) {
-              $.each(err.responseJSON.errors, function (i, error) {
-                  form.find('.error').remove();
-                  form.append('<p class="small text-danger mt-5 error">'+error[0]+'</p>');
-              });
-            }
+              form.find(".delete-board-btn").addClass('hidden');
+              form.find('.modal-password').parent().addClass('hidden');
+              modal.find('#destroy-btn').attr('href', '/destroy/'+id);
+            } 
+            $.fn.showData(modal, result, password.val());
+            modal.modal('show');
           }
         });
     });

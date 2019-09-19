@@ -53,23 +53,6 @@ class BoardController extends Controller
         return response()->json($returnData);
     }
 
-    private function checkPassword($boardPassword, $requestPassword, $action)
-    {
-        $passErr = null;
-        $message = null;
-        if (is_null($boardPassword)) {
-            $message = "This message can't " . $action 
-                     .", because this message has not been set password";
-            $passErr = 'not set';
-        } else {
-            if (!Hash::check($requestPassword, $boardPassword)) {
-                $message = "The password you entered do not match, Please try again";
-                $passErr = 'wrong';
-            } 
-        }
-        return ['passErr' => $passErr, 'message' => $message];
-    }
-
     public function update(Request $request, $id)
     {
         $rules = [
@@ -133,28 +116,16 @@ class BoardController extends Controller
 
     public function delete(Request $request, $id)
     {
-        $board   = Board::find($id);
-        $message = null;
-        
-        $request->validate([
-            'password' => 'nullable|numeric|digits:4'
-        ]);
+        $board         = Board::find($id, ['id', 'name', 'title', 'message', 'image']);
+        $boardPassword = Board::where('id', $id)->value('password');
+        $check         = $this->checkPassword($boardPassword, $request->password, 'delete');
 
         if ($request->user()->id ?? null === $id) {
-            return response()->json($board);
+            return response()->json(['board' => $board]);
         }
         
-        if (Hash::check($request->password, $board->password)) {
-            return response()->json();
-        } else {
-            if (is_null($board->password)) {
-                $message = "This message can't delete, because this message has not been set password";
-            } else {
-                $message = "The password you entered do not match, Please try again";
-            }
-        }
-        
-        return response()->json(['password' => false, 'message' => $message]);
+        $returnData = ['board' => $board, 'passErr' => $check['passErr'], 'message' => $check['message']];
+        return response()->json($returnData);
     }
 
     public function destroy($id)
@@ -163,5 +134,22 @@ class BoardController extends Controller
         Storage::delete("public/image/board/{$board->image}");
         Board::destroy($id);
         return back();
+    }
+
+    private function checkPassword($boardPassword, $requestPassword, $action)
+    {
+        $passErr = null;
+        $message = null;
+        if (is_null($boardPassword)) {
+            $message = "This message can't " . $action 
+                     .", because this message has not been set password";
+            $passErr = 'not set';
+        } else {
+            if (!Hash::check($requestPassword, $boardPassword)) {
+                $message = "The password you entered do not match, Please try again";
+                $passErr = 'wrong';
+            } 
+        }
+        return ['passErr' => $passErr, 'message' => $message];
     }
 }
