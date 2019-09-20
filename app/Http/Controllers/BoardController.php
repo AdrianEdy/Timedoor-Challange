@@ -24,8 +24,8 @@ class BoardController extends Controller
         $board->name     = $request->name;
         $board->title    = $request->title;
         $board->message  = $request->body;
-        $imageName       = $request->image ? 
-            uniqid('img_') . '.' . $request->image->getClientOriginalExtension() : null;
+        $imageName       = $request->image ? uniqid('img_') . '.' 
+                         . $request->image->getClientOriginalExtension() : null;
         $board->image    = $request->image ? $imageName : null;
         $board->password = $request->password ? Hash::make($request->password) : null;
         $board->save();
@@ -39,9 +39,11 @@ class BoardController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $board         = Board::find($id, ['id', 'name', 'title', 'message', 'image']);
+        $board         = Board::find($id, 
+                         ['id', 'name', 'title', 'message', 'image']);
         $boardPassword = Board::where('id', $id)->value('password');
-        $check         = $this->checkPassword($boardPassword, $request->password, 'edit');
+        $check         = $this->checkPassword($boardPassword, 
+                         $request->password, 'edit');
 
         if ($request->user()->id ?? null === $id) {
             return response()->json(['board' => $board]);
@@ -49,7 +51,12 @@ class BoardController extends Controller
         
         $check = $this->checkPassword($boardPassword, $request->password, 'edit');
 
-        $returnData = ['board' => $board, 'passErr' => $check['passErr'], 'message' => $check['message']];
+        $returnData = [
+            'board' => $board, 
+            'passErr' => $check['passErr'], 
+            'message' => $check['message']
+        ];
+
         return response()->json($returnData);
     }
 
@@ -92,8 +99,8 @@ class BoardController extends Controller
                 'image' => null
             ]);
         } else {
-            $imageName = $request->editImage ? 
-                uniqid('img_') . '.' . $request->editImage->getClientOriginalExtension() : null;
+            $imageName = $request->editImage ? uniqid('img_') . '.' 
+                       . $request->editImage->getClientOriginalExtension() : null;
             Board::where('id', $id)->update([
                 'image' => $request->editImage ? $imageName : $board->image
             ]);
@@ -120,7 +127,12 @@ class BoardController extends Controller
             return response()->json(['board' => $board]);
         }
         
-        $returnData = ['board' => $board, 'passErr' => $check['passErr'], 'message' => $check['message']];
+        $returnData = [
+            'board' => $board, 
+            'passErr' => $check['passErr'], 
+            'message' => $check['message']
+        ];
+        
         return response()->json($returnData);
     }
 

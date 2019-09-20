@@ -5,13 +5,15 @@
                 @csrf
                 <input type="hidden" name="editId" class="modal-id"/>
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span></button>
                     <h4 class="modal-title" id="myModalLabel">Edit Item</h4>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Name</label>
-                        <input type="text" class="form-control modal-name" name="editName" value="{{ old('modal-name') }}">
+                        <input type="text" class="form-control modal-name" 
+                        name="editName" value="{{ old('modal-name') }}">
                     </div>
                     <div class="form-group">
                         <label>Title</label>
@@ -31,7 +33,8 @@
                                 <input type="text" class="form-control upload-form" value="No file chosen" readonly>
                                 <span class="input-group-btn">
                                 <span class="btn btn-default btn-file">
-                                    <i class="fa fa-folder-open"></i>&nbsp;Browse <input type="file" name="editImage" multiple>
+                                    <i class="fa fa-folder-open"></i>&nbsp;Browse
+                                    <input type="file" name="editImage" multiple>
                                 </span>
                                 </span>
                             </div>
