@@ -122,7 +122,8 @@ $(document).on('change', '.btn-file :file', function() {
             form  = $('#form-delete');   
 
         form.find(".form-control:not(.modal-password)").attr('readonly', true);
-
+        form.find(".confirm-message").empty();
+        
         $.ajax({
           headers: {
             'X-CSRF-Token': $('meta[name="_token"]').attr('content')
@@ -148,6 +149,7 @@ $(document).on('change', '.btn-file :file', function() {
               } 
               password.val(null);
             } else {
+              form.find(".confirm-message").append('Are you sure want to delete this item?');
               form.find(".delete-board-btn").addClass('hidden');
               form.find('.modal-password').parent().addClass('hidden');
               modal.find('#destroy-btn').attr('href', '/destroy/'+id);

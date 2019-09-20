@@ -31,7 +31,7 @@
                         <input type="password" class="form-control modal-password" name="password">
                     </div>
                 </div>
-                <p style="text-align:center">Are you sure want to delete this item?</p>
+                <p style="text-align:center" class="confirm-message"></p>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <a id="destroy-btn">
