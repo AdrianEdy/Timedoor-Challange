@@ -17,7 +17,7 @@
                 <div class="form-group">
                     <label>Name</label>
                     <input type="text" class="form-control @error('name') is-invalid @enderror" name="name"
-                    value="{{ Auth::user()->name ?? old('name') }}">
+                    value="{{ old('name') ?? (Auth::user()->name ?? old('name')) }}">
                     @error('name')
                         <p class="small text-danger mt-5">{{ $message }}</p>
                     @enderror

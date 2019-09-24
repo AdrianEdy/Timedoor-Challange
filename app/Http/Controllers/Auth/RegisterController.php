@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Auth;
-use Mail;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -53,7 +52,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'between:3,16'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email:filter', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'between:8,16']
         ]);
     }
@@ -77,5 +76,17 @@ class RegisterController extends Controller
     {
         $this->validator($request->all())->validate();
         return view('auth/register-form')->with('request', $request);
+    }
+
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        // $this->guard()->login($user);
+
+        return $this->registered($request, $user)
+                        ?: redirect($this->redirectPath());
     }
 }

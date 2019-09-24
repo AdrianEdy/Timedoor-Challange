@@ -132,7 +132,7 @@ class BoardController extends Controller
             'passErr' => $check['passErr'], 
             'message' => $check['message']
         ];
-        
+
         return response()->json($returnData);
     }
 

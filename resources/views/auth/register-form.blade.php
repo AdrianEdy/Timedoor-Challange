@@ -33,7 +33,7 @@
         </div>
         <div class="login-box-footer">
             <div class="text-right">
-            <a href="{{ url()->previous() }}" class="btn btn-default">Back</a>
+            <a href="{{ route('register') }}" class="btn btn-default">Back</a>
             <button type="submit" class="btn btn-primary">
                 Submit
             </button>

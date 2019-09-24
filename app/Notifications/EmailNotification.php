@@ -41,12 +41,6 @@ class EmailNotification extends VerifyEmail
      */
     public function toMail($notifiable)
     {
-        // return (new MailMessage)
-        //             ->line('The introduction to the notification.')
-        //             ->action('Notification Action', url('/'))
-        //             ->line('Thank you for using our application!');
-
-        //
         $verificationUrl = $this->verificationUrl($notifiable);
 
         if (static::$toMailCallback) {
@@ -57,7 +51,7 @@ class EmailNotification extends VerifyEmail
             ->subject('Verify Email Address')
             ->line('Hi, Mr. '. $notifiable->name)
             ->line('To enable your account, please click in the following line or' 
-            . ' copy it onto the address bar of your favourite browser.')
+                . ' copy it onto the address bar of your favourite browser.')
             ->action('Verify Email Address', $verificationUrl)
             ->line('Please click within 24 hours.');
     }
