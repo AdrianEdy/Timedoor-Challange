@@ -88,7 +88,8 @@ $(document).on('change', '.btn-file :file', function() {
     // UPDATE
     $("form#form-edit").submit(function(e) {
         e.preventDefault();    
-        var formData = new FormData(this);
+        var formData = new FormData(this),
+            form     = $(this);
         $.ajax({
           url: "/update/" + formData.get('editId'),
           method: 'post',
@@ -96,8 +97,35 @@ $(document).on('change', '.btn-file :file', function() {
           contentType: false,
           cache: false,
           processData: false,
-          success: function(){
-            location.reload();
+          success: function(result){
+            if (result.passErr === null)
+              location.reload();
+            form.find('.error').remove();
+            form.find("#update-btn").removeClass('hidden');
+            form.find(".edit-board-btn").removeClass('hidden');
+            form.find('.modal-password').parent().removeClass('hidden');
+            form.find(".edit-board-btn").attr('data-id', result.board.id);
+            
+            if (result.passErr) {
+              form.find("#update-btn").addClass('hidden');
+              form.prepend('<p class="small text-danger mt-5 error text-center">' + result.message + '</p>');
+              form.find(".form-control:not(.modal-password)").attr('readonly', true);
+              $(".edit-image").addClass('hidden');
+              if (result.passErr == 'not set') {
+                form.find('.modal-password').parent().addClass('hidden');
+                form.find(".edit-board-btn").addClass('hidden');
+                form.find("#update-btn").addClass('hidden');
+              } 
+              form.find(':password').val(null);
+            } else {
+              $(".edit-image").removeClass('hidden');
+              form.find(".form-control:not(.modal-password)").attr('readonly', false);
+              form.find(".edit-board-btn").addClass('hidden');
+              form.find('.modal-password').parent().addClass('hidden');
+              form.attr('action', '/update/'+result.board.id);
+            } 
+            $.fn.showData(form, result, formData.get('password'));
+            $('#editModal').modal('show');
           },
           error: function(err){
             if (err.status == 422) {

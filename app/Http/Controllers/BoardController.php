@@ -93,6 +93,16 @@ class BoardController extends Controller
         $boardPassword = Board::where('id', $id)->value('password');
         $check         = $this->checkPassword($boardPassword, $request->password, 'edit');
         
+        $returnData = [
+            'board' => $board, 
+            'passErr' => $check['passErr'], 
+            'message' => $check['message']
+        ];
+
+        if ($returnData['passErr']) {
+            return response()->json($returnData);
+        }
+        
         if ($request->has('deleteImage')) {
             Storage::delete("public/image/board/{$board->image}");
             Board::where('id', $id)->update([
@@ -114,7 +124,8 @@ class BoardController extends Controller
             'title' => $request->editTitle,
             'message' => $request->editBody
         ]);
-        return response()->json();
+
+        return response()->json($returnData);
     }
 
     public function delete(Request $request, $id)
