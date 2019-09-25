@@ -146,8 +146,8 @@ $(document).on('change', '.btn-file :file', function() {
         var formPass  = $(this).parents('.form-manage'),
             id        = $(this).data('id'),
             password  = formPass.find(':password'),
-            modal = $('#deleteModal'),
-            form  = $('#form-delete');   
+            modal     = $('#deleteModal'),
+            form      = $('#form-delete');   
 
         form.find(".form-control:not(.modal-password)").attr('readonly', true);
         form.find(".confirm-message").empty();
