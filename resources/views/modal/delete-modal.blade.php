@@ -37,7 +37,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <a id="destroy-btn">
-                        <button type="button" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
                     </a>
                     <button type="button" class="btn btn-success delete-board-btn">Submit</button>
                 </div>

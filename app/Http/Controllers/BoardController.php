@@ -40,12 +40,12 @@ class BoardController extends Controller
     public function edit(Request $request, $id)
     {
         $board         = Board::find($id, 
-                         ['id', 'name', 'title', 'message', 'image']);
+                         ['id', 'user_id', 'name', 'title', 'message', 'image']);
         $boardPassword = Board::where('id', $id)->value('password');
         $check         = $this->checkPassword($boardPassword, 
                          $request->password, 'edit');
 
-        if ($request->user()->id ?? null === $id) {
+        if (($request->user()->id ?? null) === $board->user_id) {
             return response()->json(['board' => $board]);
         }
         
@@ -89,7 +89,7 @@ class BoardController extends Controller
 
         $request->validate($rules, $messages);
 
-        $board         = Board::find($id, ['id', 'name', 'title', 'message', 'image']);
+        $board         = Board::find($id, ['id', 'user_id', 'name', 'title', 'message', 'image']);
         $boardPassword = Board::where('id', $id)->value('password');
         $check         = $this->checkPassword($boardPassword, $request->password, 'edit');
         
@@ -99,7 +99,7 @@ class BoardController extends Controller
             'message' => $check['message']
         ];
 
-        if ($returnData['passErr']) {
+        if ($returnData['passErr'] || (($request->user()->id ?? null) === $board->user_id)) {
             return response()->json($returnData);
         }
         
@@ -147,11 +147,16 @@ class BoardController extends Controller
         return response()->json($returnData);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $board = Board::find($id);
-        Storage::delete("public/image/board/{$board->image}");
-        Board::destroy($id);
+        $check = $this->checkPassword($board->password, $request->password, 'delete');
+
+        if (!($check['passErr'] || ($request->user()->id ?? null === $id))) {
+            Storage::delete("public/image/board/{$board->image}");
+            Board::destroy($id);
+        }
+
         return back();
     }
 

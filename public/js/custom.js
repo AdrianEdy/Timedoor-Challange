@@ -180,7 +180,7 @@ $(document).on('change', '.btn-file :file', function() {
               form.find(".confirm-message").append('Are you sure want to delete this item?');
               form.find(".delete-board-btn").addClass('hidden');
               form.find('.modal-password').parent().addClass('hidden');
-              modal.find('#destroy-btn').attr('href', '/destroy/'+id);
+              form.attr('action', '/destroy/'+id);
             } 
             $.fn.showData(modal, result, password.val());
             modal.modal('show');

@@ -28,6 +28,6 @@ Route::get('/', 'HomeController@index')->name('home');
 Route::get('/save', 'HomeController@create');
 Route::post('/store', 'BoardController@store')->name('store');
 Route::post('/delete/{id}', 'BoardController@delete')->name('delete');
-Route::get('/destroy/{id}', 'BoardController@destroy')->name('destroy');
+Route::post('/destroy/{id}', 'BoardController@destroy')->name('destroy');
 Route::post('/edit/{id}', 'BoardController@edit')->name('edit');
 Route::post('/update/{id}', 'BoardController@update')->name('update');
