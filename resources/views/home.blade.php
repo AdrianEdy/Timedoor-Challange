@@ -1,9 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <header>
-        @include('template/header')
-    </header>
     <main>
         <div class="section">
         <div class="container">
@@ -91,7 +88,7 @@
                         @endif
                     </span></h4>
                     <p>
-                    {{ $board->message }}
+                    {!! nl2br(e($board->message)) !!}
                     </p>
                     <div class="img-box my-10">
                     @if (!is_null($board->image) && file_exists('storage/image/board/' . $board->image))
@@ -124,15 +121,17 @@
                     </form>
                 </div>
                 @endforeach
-                {{ $boards->links('template/pagination') }}
+                <div class="text-center mt-30">
+                    {{ $boards->links() }}
+                </div>
             </div>
             </div>
         </div>
         </div>
-    </main>
-    <footer>
-        @include('template/footer')
-    </footer>
+    </main>  
+@endsection
+
+@section('modal')
     @include('modal/edit-modal')
     @include('modal/delete-modal')
     <script type="text/javascript" src="{{ asset('js/custom.js') }}"></script>

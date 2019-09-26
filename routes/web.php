@@ -17,8 +17,8 @@ Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
-Route::post('confirm-register', 'Auth\RegisterController@confirmRegister')->name('confirm.register');
-Route::post('save-register', 'Auth\RegisterController@register')->name('save.register');
+Route::post('register/confirm', 'Auth\RegisterController@confirmRegister')->name('confirm.register');
+Route::post('register/save', 'Auth\RegisterController@register')->name('save.register');
 
 Route::get('email/verify', 'Auth\VerificationController@show')->name('verification.notice');
 Route::get('email/verify/{id}', 'Auth\VerificationController@verify')->name('verification.verify');

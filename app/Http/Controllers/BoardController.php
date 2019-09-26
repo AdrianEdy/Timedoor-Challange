@@ -9,7 +9,7 @@ use App\Board;
 
 class BoardController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request, Board $board)
     {
         $request->validate([
             'name'      => 'nullable|between:3,16',
@@ -19,7 +19,7 @@ class BoardController extends Controller
             'password'  => 'nullable|numeric|digits:4'
         ]);
 
-        $board           =  new Board;
+        // $board           =  new Board;
         $board->user_id  = $request->user()->id ?? null;
         $board->name     = $request->name;
         $board->title    = $request->title;
@@ -45,7 +45,7 @@ class BoardController extends Controller
         $check         = $this->checkPassword($boardPassword, 
                          $request->password, 'edit');
 
-        if (($request->user()->id ?? null) === $board->user_id) {
+        if (($request->user()->id ?? false) === $board->user_id) {
             return response()->json(['board' => $board]);
         }
         
@@ -99,7 +99,7 @@ class BoardController extends Controller
             'message' => $check['message']
         ];
 
-        if ($returnData['passErr'] || (($request->user()->id ?? null) === $board->user_id)) {
+        if ($returnData['passErr'] || (($request->user()->id ?? false) === $board->user_id)) {
             return response()->json($returnData);
         }
         
@@ -134,7 +134,7 @@ class BoardController extends Controller
         $boardPassword = Board::where('id', $id)->value('password');
         $check         = $this->checkPassword($boardPassword, $request->password, 'delete');
 
-        if (($request->user()->id ?? null) === $board->user_id) {
+        if (($request->user()->id ?? false) === $board->user_id) {
             return response()->json(['board' => $board]);
         }
         
@@ -152,7 +152,7 @@ class BoardController extends Controller
         $board = Board::find($id);
         $check = $this->checkPassword($board->password, $request->password, 'delete');
 
-        if (!($check['passErr'] || (($request->user()->id ?? null) === $board->user_id))) {
+        if (!($check['passErr'] || (($request->user()->id ?? false) === $board->user_id))) {
             Storage::delete("public/image/board/{$board->image}");
             Board::destroy($id);
         }
