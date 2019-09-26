@@ -88,4 +88,17 @@ class LoginController extends Controller
             $this->username() => [trans('auth.failed')],
         ]);
     }    
+
+    public function logout(Request $request)
+    {
+        if ($request->_token !== $request->session()->token()) {
+            return redirect('/');
+        }
+        
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
+
+        return $this->loggedOut($request) ?: redirect('/');
+    }
 }
