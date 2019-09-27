@@ -59,17 +59,21 @@ class LoginController extends Controller
         $errors = null;
         if (!$user) {
             $errors[$this->username()] = "Your {$this->username()} is wrong!";
-        } elseif (!Hash::check($request->password, $user->password)) {
-            $errors['password'] = "Your password is wrong!";
-        } elseif (!$user->hasVerifiedEmail()) {
-            $errors['verified'] = "Your email has not been verified yet, "
-                                . "please verified your email first.";
         } else {
-            if ($this->attemptLogin($request)) {
-                return $this->sendLoginResponse($request);
+            if (!Hash::check($request->password, $user->password)) {
+                $errors['password'] = "Your password is wrong!";
+            } else {
+                if (!$user->hasVerifiedEmail()) {
+                    $errors['verified'] = "Your email has not been verified yet, "
+                                        . "please verified your email first.";
+                } else {
+                    if ($this->attemptLogin($request)) {
+                        return $this->sendLoginResponse($request);
+                    }
+                }
             }
         }
-
+        
         // If the login attempt was unsuccessful we will increment the number of attempts
         // to login and redirect the user back to the login form. Of course, when this
         // user surpasses their maximum number of attempts they will get locked out.
