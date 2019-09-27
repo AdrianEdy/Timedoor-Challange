@@ -20,7 +20,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $boards = Board::orderBy('created_at', 'desc')->paginate(10)->onEachSide(2);
-        return view('home')->with('boards', $boards);
+        //
     }
 }

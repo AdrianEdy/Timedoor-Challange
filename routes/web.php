@@ -25,8 +25,7 @@ Route::get('email/verify', 'Auth\VerificationController@show')->name('verificati
 Route::get('email/verify/{id}', 'Auth\VerificationController@verify')->name('verification.verify');
 
 //Other page routes
-Route::get('/', 'HomeController@index')->name('home');
-Route::get('/save', 'HomeController@create');
+Route::get('/', 'BoardController@index')->name('home');
 Route::post('/store', 'BoardController@store')->name('store');
 Route::post('/delete/{id}', 'BoardController@delete')->name('delete');
 Route::post('/destroy/{id}', 'BoardController@destroy')->name('destroy');

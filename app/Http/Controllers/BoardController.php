@@ -9,6 +9,12 @@ use App\Board;
 
 class BoardController extends Controller
 {
+    public function index(Board $board)
+    {
+        $boards = $board->orderBy('created_at', 'desc')->paginate(10)->onEachSide(2);
+        return view('home')->with('boards', $boards);
+    }
+
     public function store(Request $request, Board $board)
     {
         $request->validate([
@@ -19,16 +25,17 @@ class BoardController extends Controller
             'password'  => 'nullable|numeric|digits:4'
         ]);
 
-        // $board           =  new Board;
-        $board->user_id  = $request->user()->id ?? null;
-        $board->name     = $request->name;
-        $board->title    = $request->title;
-        $board->message  = $request->body;
         $imageName       = $request->image ? uniqid('img_') . '.' 
                          . $request->image->getClientOriginalExtension() : null;
-        $board->image    = $request->image ? $imageName : null;
-        $board->password = $request->password ? Hash::make($request->password) : null;
-        $board->save();
+
+        $board->create([
+            'user_id'  => $request->user()->id ?? null,
+            'name'     => $request->name,
+            'title'    => $request->title,
+            'message'  => $request->body,
+            'image'    => $imageName,
+            'password' => $request->password ? Hash::make($request->password) : null
+        ]);
 
         if ($request->image) {
             $request->image->storeAs('image/board', $imageName, 'public');
