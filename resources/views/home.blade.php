@@ -13,7 +13,7 @@
                 @csrf
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" class="form-control @error('name') is-invalid @enderror" name="name"
+                    <input type="text" class="form-control" name="name"
                     value="{{ old('name') ?? (Auth::user()->name ?? old('name')) }}">
                     @error('name')
                         <p class="small text-danger mt-5">{{ $message }}</p>
@@ -21,7 +21,7 @@
                 </div>
                 <div class="form-group">
                     <label>Title</label>
-                    <input type="text" class="form-control @error('title') is-invalid @enderror" name="title"
+                    <input type="text" class="form-control" name="title"
                     value="{{ old('title') }}">
                     @error('title')
                         <p class="small text-danger mt-5">{{ $message }}</p>
@@ -29,7 +29,7 @@
                 </div>
                 <div class="form-group">
                     <label>Body</label>
-                    <textarea rows="5" class="form-control @error('body') is-invalid @enderror" 
+                    <textarea rows="5" class="form-control" 
                     name="body">{{ old('body') }}</textarea>
                     @error('body')
                         <p class="small text-danger mt-5">{{ $message }}</p>
@@ -54,7 +54,7 @@
                     <div class="form-group">
                         <label>Password</label>
                         <input type="password" 
-                        class="form-control @error('password') is-invalid @enderror" name="password">
+                        class="form-control" name="password">
                         @error('password')
                             <p class="small text-danger mt-5">{{ $message }}</p>
                         @enderror
@@ -99,25 +99,35 @@
                         src="{{ url('storage/image/image-not-available.jpg') }}" alt="image">
                     @endif
                     </div>
-                    <form class="form-inline mt-50 form-manage">
-                    @guest
-                        @if(!$board->user_id)
-                            <div class="form-group mx-sm-3 mb-2">
-                                <label for="inputPassword2" class="sr-only">Password</label>
-                                <input type="password" class="form-control" name="password" placeholder="Password">
-                            </div> 
-                            <a type="submit" class="btn btn-default mb-2 edit-board-btn" 
-                            data-id={{ $board->id }}><i class="fa fa-pencil p-3"></i></a>
-                            <a type="submit" class="btn btn-danger mb-2 delete-board-btn" 
-                            data-id={{ $board->id }}><i class="fa fa-trash p-3"></i></a> 
+                    <form class="form-inline mt-50 form-manage" method="post">
+                        @csrf
+                        @guest
+                            @if(!$board->user_id)
+                                <div class="form-group mx-sm-3 mb-2">
+                                    <label for="inputPassword2" class="sr-only">Password</label>
+                                    <input type="password" class="form-control" 
+                                    name="password" placeholder="Password">
+                                </div> 
+                                <button formaction="{{ route('edit', $board->id)}}"
+                                class="btn btn-default mb-2 edit-board-btn">
+                                    <i class="fa fa-pencil p-3"></i>
+                                </button>
+                                <button formaction="{{ route('delete', $board->id)}}"
+                                class="btn btn-danger mb-2 delete-board-btn">
+                                    <i class="fa fa-trash p-3"></i>
+                                </button> 
+                            @endif
+                        @endguest
+                        @if((Auth::id() === $board->user_id) && !is_null($board->user_id))
+                            <button formaction="{{ route('edit', $board->id)}}"
+                            class="btn btn-default mb-2">
+                                <i class="fa fa-pencil p-3"></i>
+                            </button>
+                            <button formaction="{{ route('delete', $board->id)}}" 
+                            class="btn btn-danger mb-2 delete-board-btn">
+                                <i class="fa fa-trash p-3"></i>
+                            </button>
                         @endif
-                    @endguest
-                    @if((Auth::id() === $board->user_id) && !is_null($board->user_id))
-                        <a type="submit" class="btn btn-default mb-2 edit-board-btn" 
-                        data-id={{ $board->id }}><i class="fa fa-pencil p-3"></i></a>
-                        <a type="submit" class="btn btn-danger mb-2 delete-board-btn" 
-                        data-id={{ $board->id }}><i class="fa fa-trash p-3"></i></a>
-                    @endif
                     </form>
                 </div>
                 @endforeach
@@ -132,7 +142,26 @@
 @endsection
 
 @section('modal')
-    @include('modal/edit-modal')
-    @include('modal/delete-modal')
-    <script type="text/javascript" src="{{ asset('js/custom.js') }}"></script>
+    @if(Session::has('modal'))
+        @if(Session::get('modal') === 'edit')
+            @if(is_null(Session::get('passErr')))
+                @include('modal/edit-modal')
+            @else
+                @include('modal/wrong-edit-modal')
+            @endif
+            <script>
+                $('#modal').modal('show');
+            </script>
+        @endif
+        @include('modal/delete-modal')
+        {{-- <script type="text/javascript" src="{{ asset('js/custom.js') }}"></script> --}}
+    @endif
+    @if($errors->has('errorModal'))
+        @if(strpos($errors->first('errorModal'), 'update'))
+            @include('modal/edit-modal')
+        @endif
+        <script>
+            $('#modal').modal('show');
+        </script>
+    @endif
 @endsection

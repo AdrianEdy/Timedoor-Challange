@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\BoardModalRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Board;
@@ -53,52 +54,42 @@ class BoardController extends Controller
                          $request->password, 'edit');
 
         if (($request->user()->id ?? false) === $board->user_id) {
-            return response()->json(['board' => $board]);
+            return back()
+                ->with('board', $board)
+                ->with('submitPass', $request->password)
+                ->with('modal', 'edit');
         }
         
         $check = $this->checkPassword($boardPassword, $request->password, 'edit');
 
-        $returnData = [
-            'board' => $board, 
-            'passErr' => $check['passErr'], 
-            'message' => $check['message']
-        ];
+        if ($check['passErr']) {
+            return back()
+                ->with('board', $board)
+                ->with('modal', 'edit')
+                ->with('passErr', $check['passErr'])
+                ->with('message', $check['message']);
+        } 
 
-        return response()->json($returnData);
+        return back()
+            ->with('board', $board)
+            ->with('submitPass', $request->password)
+            ->with('modal', 'edit');
     }
 
-    public function update(Request $request, $id)
+    public function update(BoardModalRequest $request, $id)
     {
-        $rules = [
-            'editName'  => 'nullable|between:3,16',
-            'editTitle' => 'required|between:10,32',
-            'editBody'  => 'required|between:10,200',
-            'editImage' => 'image|max:1000'
-        ];
+        // $request->validate();
 
-        $messages = [
-            'editName.between'   => [
-                'string' => 'The name must be between :min and :max characters.'
-            ],
-            'editTitle.required' => 'The title field is required.',
-            'editTitle.between'  => [
-                'string' => 'The title must be between :min and :max characters.'
-            ],
-            'editBody.required'  => 'The body field is required.',
-            'editBody.between'   => [
-                'string' => 'The body must be between :min and :max characters.'
-            ],
-            'editImage.image'    => 'The image must be an image.',
-            'editImage.max'      => [
-                'file' => 'The image may not be greater than :max Kilobytes.'
-            ]
-        ];
-
-        $request->validate($rules, $messages);
+        // if ($checkRequest->fails()) {
+        //     return redirect()->back()
+        //         ->withErrors($checkRequest->errors())
+        //         ->withErrors('errorModal', Request::url())
+        //         ->withInput();
+        // }
 
         $board         = Board::find($id, ['id', 'user_id', 'name', 'title', 'message', 'image']);
         $boardPassword = Board::where('id', $id)->value('password');
-        $check         = $this->checkPassword($boardPassword, $request->password, 'edit');
+        $check         = $this->checkPassword($boardPassword, $request->editPassword, 'edit');
         
         $returnData = [
             'board' => $board, 
@@ -107,7 +98,7 @@ class BoardController extends Controller
         ];
 
         if ($returnData['passErr'] || (($request->user()->id ?? false) === $board->user_id)) {
-            return response()->json($returnData);
+            return back();
         }
         
         if ($request->has('deleteImage')) {
@@ -132,7 +123,7 @@ class BoardController extends Controller
             'message' => $request->editBody
         ]);
 
-        return response()->json($returnData);
+        return back();
     }
 
     public function delete(Request $request, $id)
@@ -171,6 +162,7 @@ class BoardController extends Controller
     {
         $passErr = null;
         $message = null;
+
         if (is_null($boardPassword)) {
             $message = "This message can't " . $action 
                      .", because this message has not been set password";
