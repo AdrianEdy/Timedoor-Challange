@@ -51,16 +51,16 @@ class BoardController extends Controller
                          ['id', 'user_id', 'name', 'title', 'message', 'image']);
         $boardPassword = Board::where('id', $id)->value('password');
         $check         = $this->checkPassword($boardPassword, 
-                         $request->password, 'edit');
+                         $request->submitPass, 'edit');
 
         if (($request->user()->id ?? false) === $board->user_id) {
             return back()
                 ->with('board', $board)
-                ->with('submitPass', $request->password)
+                ->with('submitPass', $request->submitPass)
                 ->with('modal', 'edit');
         }
         
-        $check = $this->checkPassword($boardPassword, $request->password, 'edit');
+        $check = $this->checkPassword($boardPassword, $request->submitPass, 'edit');
 
         if ($check['passErr']) {
             return back()
@@ -72,7 +72,7 @@ class BoardController extends Controller
 
         return back()
             ->with('board', $board)
-            ->with('submitPass', $request->password)
+            ->with('submitPass', $request->submitPass)
             ->with('modal', 'edit');
     }
 
@@ -80,9 +80,12 @@ class BoardController extends Controller
     {
         $board         = Board::find($id, ['id', 'user_id', 'name', 'title', 'message', 'image']);
         $boardPassword = Board::where('id', $id)->value('password');
-        $check         = $this->checkPassword($boardPassword, $request->editPassword, 'edit');
+        $check         = $this->checkPassword($boardPassword, $request->submitPass, 'edit');
 
-        if ($check['passErr'] || (($request->user()->id ?? false) === $board->user_id)) {
+        if ($check['passErr']) {
+            return back()->with('bruh',$check['passErr']);
+        }
+        if (! (is_null($check['passErr']) || (($request->user()->id ?? false) === $board->user_id))) {
             return back();
         }
         
@@ -119,11 +122,11 @@ class BoardController extends Controller
         if (($request->user()->id ?? false) === $board->user_id) {
             return back()
                 ->with('board', $board)
-                ->with('submitPass', $request->password)
+                ->with('submitPass', $request->submitPass)
                 ->with('modal', 'delete');
         }
 
-        $check         = $this->checkPassword($boardPassword, $request->password, 'delete');
+        $check = $this->checkPassword($boardPassword, $request->submitPass, 'delete');
         
         if ($check['passErr']) {
             return back()
@@ -135,14 +138,14 @@ class BoardController extends Controller
 
         return back()
             ->with('board', $board)
-            ->with('submitPass', $request->password)
+            ->with('submitPass', $request->submitPass)
             ->with('modal', 'delete');
     }
 
     public function destroy(Request $request, $id)
     {
         $board = Board::find($id);
-        $check = $this->checkPassword($board->password, $request->deletePassword, 'delete');
+        $check = $this->checkPassword($board->password, $request->submitPass, 'delete');
 
         if (is_null($check['passErr']) || (($request->user()->id ?? false) === $board->user_id)) {
             Storage::delete("public/image/board/{$board->image}");

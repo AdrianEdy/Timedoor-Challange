@@ -9,7 +9,7 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
                     <span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Edit Item</h4>
+                    <h4 class="modal-title" id="myModalLabel">Delete Item</h4>
                 </div>
                 <div class="modal-body">
                     <p class="small text-danger mt-5 error text-center">
@@ -41,7 +41,7 @@
                     <div class="form-group hidden">
                             <label>Password</label>
                             <input type="text" class="form-control" 
-                            name="deletePassword" value="{{ old('deletePassword') ?? Session::get('submitPass') }}">
+                            name="submitPass" value="{{ old('submitPass') ?? Session::get('submitPass') }}">
                     </div>
                 </div>
                 <div class="modal-footer">

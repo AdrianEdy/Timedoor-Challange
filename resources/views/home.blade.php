@@ -106,7 +106,7 @@
                                 <div class="form-group mx-sm-3 mb-2">
                                     <label for="inputPassword2" class="sr-only">Password</label>
                                     <input type="password" class="form-control" 
-                                    name="password" placeholder="Password">
+                                    name="submitPass" placeholder="Password">
                                 </div> 
                                 <button formaction="{{ route('edit', $board->id)}}"
                                 class="btn btn-default mb-2 edit-board-btn">
@@ -173,5 +173,4 @@
             $('#modal').modal('show');
         </script>
     @endif
-    <script>alert("{{ Session::get('bruh') }}")</script>
 @endsection

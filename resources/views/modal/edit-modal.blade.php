@@ -76,7 +76,7 @@
                     <div class="form-group hidden">
                             <label>Password</label>
                             <input type="text" class="form-control" 
-                            name="editPassword" value="{{ old('editPassword') ?? Session::get('submitPass') }}">
+                            name="submitPass" value="{{ Session::get('submitPass') ?? old('submitPass')}}">
                     </div>
                 </div>
                 <div class="modal-footer">

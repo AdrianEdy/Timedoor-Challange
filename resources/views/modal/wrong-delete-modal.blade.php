@@ -2,12 +2,12 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" class="form-manage" id="form-edit" 
-            enctype="multipart/form-data" action="{{ route('edit', Session::get('board')->id) }}">
+            enctype="multipart/form-data" action="{{ route('delete', Session::get('board')->id) }}">
                 @csrf
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
                     <span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Edit Item</h4>
+                    <h4 class="modal-title" id="myModalLabel">Delete Item</h4>
                 </div>
                 <div class="modal-body">
                     <p class="small text-danger mt-5 error text-center">
@@ -46,7 +46,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     @if(Session::get('passErr') !== 'not set')
-                        <button class="btn btn-primary edit-board-btn">Submit</button>
+                        <button class="btn btn-primary">Submit</button>
                     @endif
                 </div>
             </form>
