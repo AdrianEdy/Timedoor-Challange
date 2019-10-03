@@ -153,9 +153,18 @@
                 $('#modal').modal('show');
             </script>
         @endif
-        @include('modal/delete-modal')
-        {{-- <script type="text/javascript" src="{{ asset('js/custom.js') }}"></script> --}}
+        @if(Session::get('modal') === 'delete')
+            @if(is_null(Session::get('passErr')))
+                @include('modal/delete-modal')
+            @else
+                @include('modal/wrong-delete-modal')
+            @endif
+            <script>
+                $('#modal').modal('show');
+            </script>
+        @endif
     @endif
+
     @if($errors->has('errorModal'))
         @if(strpos($errors->first('errorModal'), 'update'))
             @include('modal/edit-modal')
@@ -164,4 +173,5 @@
             $('#modal').modal('show');
         </script>
     @endif
+    <script>alert("{{ Session::get('bruh') }}")</script>
 @endsection

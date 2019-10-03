@@ -81,14 +81,8 @@ class BoardController extends Controller
         $board         = Board::find($id, ['id', 'user_id', 'name', 'title', 'message', 'image']);
         $boardPassword = Board::where('id', $id)->value('password');
         $check         = $this->checkPassword($boardPassword, $request->editPassword, 'edit');
-        
-        $returnData = [
-            'board' => $board, 
-            'passErr' => $check['passErr'], 
-            'message' => $check['message']
-        ];
 
-        if ($returnData['passErr'] || (($request->user()->id ?? false) === $board->user_id)) {
+        if ($check['passErr'] || (($request->user()->id ?? false) === $board->user_id)) {
             return back();
         }
         
@@ -121,27 +115,36 @@ class BoardController extends Controller
     {
         $board         = Board::find($id, ['id', 'user_id', 'name', 'title', 'message', 'image']);
         $boardPassword = Board::where('id', $id)->value('password');
-        $check         = $this->checkPassword($boardPassword, $request->password, 'delete');
 
         if (($request->user()->id ?? false) === $board->user_id) {
-            return response()->json(['board' => $board]);
+            return back()
+                ->with('board', $board)
+                ->with('submitPass', $request->password)
+                ->with('modal', 'delete');
         }
-        
-        $returnData = [
-            'board' => $board, 
-            'passErr' => $check['passErr'], 
-            'message' => $check['message']
-        ];
 
-        return response()->json($returnData);
+        $check         = $this->checkPassword($boardPassword, $request->password, 'delete');
+        
+        if ($check['passErr']) {
+            return back()
+                ->with('board', $board)
+                ->with('modal', 'delete')
+                ->with('passErr', $check['passErr'])
+                ->with('message', $check['message']);
+        } 
+
+        return back()
+            ->with('board', $board)
+            ->with('submitPass', $request->password)
+            ->with('modal', 'delete');
     }
 
     public function destroy(Request $request, $id)
     {
         $board = Board::find($id);
-        $check = $this->checkPassword($board->password, $request->password, 'delete');
+        $check = $this->checkPassword($board->password, $request->deletePassword, 'delete');
 
-        if (!($check['passErr'] || (($request->user()->id ?? false) === $board->user_id))) {
+        if (is_null($check['passErr']) || (($request->user()->id ?? false) === $board->user_id)) {
             Storage::delete("public/image/board/{$board->image}");
             Board::destroy($id);
         }
