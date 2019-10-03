@@ -92,9 +92,6 @@ class BoardController extends Controller
         $boardPassword = Board::where('id', $id)->value('password');
         $check         = $this->checkPassword($boardPassword, $request->submitPass, 'edit');
 
-        if ($check['passErr']) {
-            return back()->with('bruh',$check['passErr']);
-        }
         if (! (is_null($check['passErr']) || (($request->user()->id ?? false) === $board->user_id))) {
             return back();
         }
