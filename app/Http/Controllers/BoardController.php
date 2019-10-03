@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\BoardModalRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use App\Board;
+use App\Models\Board;
 
 class BoardController extends Controller
 {
@@ -78,15 +78,6 @@ class BoardController extends Controller
 
     public function update(BoardModalRequest $request, $id)
     {
-        // $request->validate();
-
-        // if ($checkRequest->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($checkRequest->errors())
-        //         ->withErrors('errorModal', Request::url())
-        //         ->withInput();
-        // }
-
         $board         = Board::find($id, ['id', 'user_id', 'name', 'title', 'message', 'image']);
         $boardPassword = Board::where('id', $id)->value('password');
         $check         = $this->checkPassword($boardPassword, $request->editPassword, 'edit');
