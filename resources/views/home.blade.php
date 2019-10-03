@@ -91,11 +91,12 @@
                     {!! nl2br(e($board->message)) !!}
                     </p>
                     <div class="img-box my-10">
-                    @if (!is_null($board->image) && file_exists('storage/image/board/' . $board->image))
-                        <img class="img-responsive img-post" 
-                        src="{{ url('storage/image/board/' . $board->image) }}" alt="image">
+                    @if (!is_null($board->image) && 
+                         file_exists('storage/image/board/thumbnail/' . $board->image))
+                        <img class="img-responsive" 
+                        src="{{ url('storage/image/board/thumbnail/' . $board->image) }}" alt="image">
                     @else
-                        <img class="img-responsive img-post" 
+                        <img class="img-responsive" 
                         src="{{ url('storage/image/image-not-available.jpg') }}" alt="image">
                     @endif
                     </div>

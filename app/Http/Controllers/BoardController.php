@@ -7,6 +7,8 @@ use App\Http\Requests\BoardModalRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Board;
+use Image;
+use File;
 
 class BoardController extends Controller
 {
@@ -40,6 +42,14 @@ class BoardController extends Controller
 
         if ($request->image) {
             $request->image->storeAs('image/board', $imageName, 'public');
+
+            $thumbnail = Image::make(Storage::get("public/image/board/{$imageName}"));
+
+            $path = storage_path('app/public/image/board/thumbnail');
+            if (! File::exists($path)) File::makeDirectory($path, 775, true);
+
+            $thumbnail->resize(250,250);
+            $thumbnail->save($path . '/' . $imageName);
         }
         
         return redirect('/');
@@ -91,6 +101,7 @@ class BoardController extends Controller
         
         if ($request->has('deleteImage')) {
             Storage::delete("public/image/board/{$board->image}");
+            Storage::delete("public/image/board/thumbnail/{$board->image}");
             Board::where('id', $id)->update([
                 'image' => null
             ]);
@@ -101,7 +112,18 @@ class BoardController extends Controller
                 'image' => $request->editImage ? $imageName : $board->image
             ]);
             if ($request->editImage) {
+                Storage::delete("public/image/board/{$board->image}");
+                Storage::delete("public/image/board/thumbnail/{$board->image}");
+
                 $request->editImage->storeAs('image/board', $imageName, 'public');
+
+                $thumbnail = Image::make(Storage::get("public/image/board/{$imageName}"));
+                $path      = storage_path('app/public/image/board/thumbnail');
+
+                if (! File::exists($path)) File::makeDirectory($path, 775, true);
+
+                $thumbnail->resize(250,250);
+                $thumbnail->save($path . '/' . $imageName);
             }
         }
 
@@ -149,6 +171,7 @@ class BoardController extends Controller
 
         if (is_null($check['passErr']) || (($request->user()->id ?? false) === $board->user_id)) {
             Storage::delete("public/image/board/{$board->image}");
+            Storage::delete("public/image/board/thumbnail/{$board->image}");
             Board::destroy($id);
         }
 
