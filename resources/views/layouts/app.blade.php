@@ -28,4 +28,7 @@
   @yield('modal')
 
   @yield('footer-script')
+  {{-- <script>
+    alert('{{Auth::user()->isAdmin()}}');
+  </script> --}}
 </html>
