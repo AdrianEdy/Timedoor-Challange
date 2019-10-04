@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     
     @yield('title')
 
@@ -13,28 +16,16 @@
     <meta name="_token" content="{{ csrf_token() }}">
   </head>
 
-  <body class="bg-lgray">
-    @if(!(Request::is('login')      || 
-          Request::is('register')   || 
-          Request::is('register/*') || 
-          Request::is('email')      || 
-          Request::is('email/*')))
-            @yield('header')
-    @endif
+<body class="bg-lgray hold-transition skin sidebar-mini">  
+<div class="wrapper">
+    @yield('header')
 
     @yield('content')
-
-  </body>
-
-  @if(!(Request::is('login')      || 
-        Request::is('register')   || 
-        Request::is('register/*') || 
-        Request::is('email')      || 
-        Request::is('email/*')))
-          @yield('footer')
-  @endif
+    
+    @yield('footer')
+</div>
 
   @yield('modal')
 
-  @section('footer-script')
+  @yield('footer-script')
 </html>
