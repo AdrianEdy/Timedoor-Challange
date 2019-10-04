@@ -24,10 +24,14 @@ Route::post('register/save', 'Auth\RegisterController@register')->name('save.reg
 Route::get('email/verify', 'Auth\VerificationController@show')->name('verification.notice');
 Route::get('email/verify/{id}', 'Auth\VerificationController@verify')->name('verification.verify');
 
-//Other page routes
-Route::get('/', 'BoardController@index')->name('home');
-Route::post('/store', 'BoardController@store')->name('store');
-Route::post('/delete/{id}', 'BoardController@delete')->name('delete');
-Route::post('/destroy/{id}', 'BoardController@destroy')->name('destroy');
-Route::post('/edit/{id}', 'BoardController@edit')->name('edit');
-Route::post('/update/{id}', 'BoardController@update')->name('update');
+// Home page routes
+Route::get('', 'BoardController@index')->name('home');
+Route::post('store', 'BoardController@store')->name('store');
+Route::post('delete/{id}', 'BoardController@delete')->name('delete');
+Route::post('destroy/{id}', 'BoardController@destroy')->name('destroy');
+Route::post('edit/{id}', 'BoardController@edit')->name('edit');
+Route::post('update/{id}', 'BoardController@update')->name('update');
+
+// Dashboard routes
+Route::get('dashboard', 'DashboardController@index')->name('dashboard');
+

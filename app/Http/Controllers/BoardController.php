@@ -15,7 +15,7 @@ class BoardController extends Controller
     public function index(Board $board)
     {
         $boards = $board->orderBy('created_at', 'desc')->paginate(10)->onEachSide(2);
-        return view('home')->with('boards', $boards);
+        return view('content/home')->with('boards', $boards);
     }
 
     public function store(Request $request, Board $board)
