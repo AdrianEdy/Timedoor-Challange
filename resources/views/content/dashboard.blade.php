@@ -180,6 +180,8 @@
                     </table>
                   </form>
                 </div>
+                <form id="formMultiple" method="POST" action="{{ route('dashboard.destroy.multiple' )}}">
+                @csrf
                 <table class="table table-bordered">
                   <thead>
                     <tr>
@@ -195,7 +197,9 @@
                   <tbody>
                   @foreach ($boards as $board)
                     <tr {!! $board->trashed() ? "class='bg-gray-light'" : '' !!}>
-                      <td>{!! $board->trashed() ? "&nbsp;" : "<input type='checkbox'>" !!}</td>
+                      <td>{!! $board->trashed() ? "&nbsp;" : "
+                        <input type='checkbox' value='$board->id' name='checked[]'>" !!}
+                      </td>
                       <td>{{ $board->id }}</td>
                       <td>{{ $board->title }}</td>
                       <td>{!! nl2br(e($board->message)) !!}</td>
@@ -204,7 +208,7 @@
                             file_exists('storage/image/board/thumbnail/' . $board->image))
                             <img class="img-prev" style="width:130px"
                             src="{{ url('storage/image/board/thumbnail/' . $board->image) }}" alt="image">
-                            <a id="delete-image" href="#" data-toggle="modal" data-target="#deleteModal" data-id="{{ $board->id }}" 
+                            <a id="deleteImage" onclick="destroyImage()" href="#" data-toggle="modal" data-target="#deleteModal" data-id="{{ $board->id }}" 
                             class="btn btn-danger ml-10 btn-img" rel="tooltip" title="Delete Image">
                               <i class="fa fa-trash"></i>
                             </a>
@@ -219,26 +223,20 @@
                           <i class="fa fa-repeat"></i>
                         </a></td>
                       @else
-                        <td><a id="delete" href="#" data-toggle="modal" data-target="#deleteModal" 
+                        <td><a id="delete" onclick="destroy()" href="#" data-id="{{ $board->id }}"
+                        data-toggle="modal" data-target="#deleteModal" 
                         class="btn btn-danger" rel="tooltip" title="Delete">
                           <i class="fa fa-trash"></i>
                         </a></td>
                       @endif
                     </tr>
                   @endforeach
+                  </form>
                   </tbody>
                 </table>
-                <a href="#" class="btn btn-default mt-5" data-toggle="modal" data-target="#deleteModal">Delete Checked Items</a>
+                <a id="deleteCheck" href="#" onclick="destroyMultiple()" class="btn btn-default mt-5" data-toggle="modal" data-target="#deleteModal">Delete Checked Items</a>
                 <div class="text-center">
-                  <nav>
-                    <ul class="pagination">
-                      <li><a href="#">&laquo;</a></li>
-                      <li class="active"><a href="#">1</a></li>
-                      <li><a href="#">2</a></li>
-                      <li><a href="#">3</a></li>
-                      <li><a href="#">&raquo;</a></li>
-                    </ul>
-                  </nav>
+                  {{ $boards->links() }}
                 </div>
               </div>
             </form>
@@ -259,23 +257,26 @@
 
 
   <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <div class="text-center">
-            <h4 class="modal-title" id="myModalLabel">Delete Data</h4>
+    <form id="formDelete" method="POST">
+      @csrf
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <div class="text-center">
+              <h4 class="modal-title" id="myModalLabel">Delete Data</h4>
+            </div>
+          </div>
+          <div class="modal-body pad-20">
+            <p>Are you sure want to delete this item(s)?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button id="formDeleteBtn" class="btn btn-danger">Delete</button>
           </div>
         </div>
-        <div class="modal-body pad-20">
-          <p>Are you sure want to delete this item(s)?</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-danger">Delete</button>
-        </div>
       </div>
-    </div>
+    </form>
   </div>
 </div>
 @endsection
@@ -314,7 +315,25 @@
           $('[rel="tooltip"]').tooltip()
         });
       };
-      // DISPLAY MODAL WITH DATA
+      
+      // DISPLAY MODAL WITH FORM ACTION
+      function destroyImage() {
+        id = document.getElementById("deleteImage").dataset.id;
+        document.getElementById("formDelete")
+        .action = "dashboard/destroy/image/" + id;
+      }
+
+      function destroy() {
+        id = document.getElementById("delete").dataset.id;
+        document.getElementById("formDelete")
+        .action = "dashboard/destroy/" + id;
+      }
+
+      function destroyMultiple() {
+        document.getElementById("formDeleteBtn").type = "button";
+        document.getElementById("formDeleteBtn")
+        .onclick = function() { document.getElementById("formMultiple").submit(); };
+      }
 
     </script>
 @endsection
