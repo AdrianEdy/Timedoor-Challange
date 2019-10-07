@@ -14,7 +14,7 @@ class BoardController extends Controller
 {
     public function index(Board $board)
     {
-        $boards = $board->orderBy('created_at', 'desc')->paginate(10)->onEachSide(2);
+        $boards = $board->latest()->paginate(10)->onEachSide(2);
         return view('content/home')->with('boards', $boards);
     }
 
@@ -167,8 +167,6 @@ class BoardController extends Controller
         $check = $this->checkPassword($board->password, $request->submitPass, 'delete');
 
         if (is_null($check['passErr']) || (($request->user()->id ?? false) === $board->user_id)) {
-            Storage::delete("public/image/board/{$board->image}");
-            Storage::delete("public/image/board/thumbnail/{$board->image}");
             Board::destroy($id);
         }
 

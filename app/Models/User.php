@@ -51,7 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isAdmin()
     {
-        if (Auth::check() && (Auth::user()->status === 'admin')) {
+        if (Auth::check() && Auth::user()->status === 'admin') {
             return true;
         }
         

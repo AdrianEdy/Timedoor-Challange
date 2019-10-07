@@ -97,10 +97,6 @@ class LoginController extends Controller
         if ($errors) {
             throw ValidationException::withMessages($errors);
         }
-
-        throw ValidationException::withMessages([
-            $this->username() => [trans('auth.failed')],
-        ]);
     }    
 
     public function logout(Request $request)

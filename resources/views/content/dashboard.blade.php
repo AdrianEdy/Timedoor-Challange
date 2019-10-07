@@ -193,29 +193,39 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td><input type="checkbox"></td>
-                      <td>330</td>
-                      <td>Lorem Ipsum</td>
-                      <td>Lorem ipsum dolor sit amet, consectar bla bla bla...</td>
+                  @foreach ($boards as $board)
+                    <tr {!! $board->trashed() ? "class='bg-gray-light'" : '' !!}>
+                      <td>{!! $board->trashed() ? "&nbsp;" : "<input type='checkbox'>" !!}</td>
+                      <td>{{ $board->id }}</td>
+                      <td>{{ $board->title }}</td>
+                      <td>{!! nl2br(e($board->message)) !!}</td>
                       <td>
-                        <img class="img-prev" src="https://via.placeholder.com/500x500">
-                        <a href="#" data-toggle="modal" data-target="#deleteModal" class="btn btn-danger ml-10 btn-img" rel="tooltip" title="Delete Image"><i class="fa fa-trash"></i></a>
+                        @if (!is_null($board->image) && 
+                            file_exists('storage/image/board/thumbnail/' . $board->image))
+                            <img class="img-prev" style="width:130px"
+                            src="{{ url('storage/image/board/thumbnail/' . $board->image) }}" alt="image">
+                            <a id="delete-image" href="#" data-toggle="modal" data-target="#deleteModal" data-id="{{ $board->id }}" 
+                            class="btn btn-danger ml-10 btn-img" rel="tooltip" title="Delete Image">
+                              <i class="fa fa-trash"></i>
+                            </a>
+                        @else
+                            -
+                        @endif
                       </td>
-                      <td>2014/7/9<br><span class="small">13:59:00</span></td>
-                      <td><a href="#" data-toggle="modal" data-target="#deleteModal" class="btn btn-danger" rel="tooltip" title="Delete"><i class="fa fa-trash"></i></a></td>
+                      <td>{{ date('Y/m/d', strtotime($board->created_at)) }}<br>
+                      <span class="small">{{ date('H:i:s', strtotime($board->created_at)) }}</span></td>
+                      @if ($board->trashed())
+                        <td><a href="#" class="btn btn-default" rel="tooltip" title="Recover">
+                          <i class="fa fa-repeat"></i>
+                        </a></td>
+                      @else
+                        <td><a id="delete" href="#" data-toggle="modal" data-target="#deleteModal" 
+                        class="btn btn-danger" rel="tooltip" title="Delete">
+                          <i class="fa fa-trash"></i>
+                        </a></td>
+                      @endif
                     </tr>
-                    <tr class="bg-gray-light">
-                      <td>&nbsp;</td>
-                      <td>331</td>
-                      <td>Lorem Ipsum</td>
-                      <td>Lorem ipsum dolor sit amet, consectar bla bla bla...</td>
-                      <td>
-                        -
-                      </td>
-                      <td>2014/7/9<br><span class="small">13:59:00</span></td>
-                      <td><a href="#" class="btn btn-default" rel="tooltip" title="Recover"><i class="fa fa-repeat"></i></a></td>
-                    </tr>
+                  @endforeach
                   </tbody>
                 </table>
                 <a href="#" class="btn btn-default mt-5" data-toggle="modal" data-target="#deleteModal">Delete Checked Items</a>
@@ -304,5 +314,7 @@
           $('[rel="tooltip"]').tooltip()
         });
       };
+      // DISPLAY MODAL WITH DATA
+
     </script>
 @endsection
