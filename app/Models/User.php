@@ -6,6 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Notifications\EmailNotification;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Auth;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -46,5 +47,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendEmailVerificationNotification()
     {
         $this->notify(new EmailNotification);
+    }
+
+    public function isAdmin()
+    {
+        if (Auth::check() && Auth::user()->status === 'admin') {
+            return true;
+        }
+        
+        return false;
     }
 }

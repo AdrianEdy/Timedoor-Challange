@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<body>
     <main>
         <div class="section">
         <div class="container">
@@ -140,6 +141,7 @@
         </div>
         </div>
     </main>  
+</body>
 @endsection
 
 @section('modal')

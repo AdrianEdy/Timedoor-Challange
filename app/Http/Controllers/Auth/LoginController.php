@@ -82,15 +82,21 @@ class LoginController extends Controller
         return $this->sendFailedLoginResponse($request, $errors);
     }
 
+    protected function sendLoginResponse(Request $request)
+    {
+        $request->session()->regenerate();
+
+        $this->clearLoginAttempts($request);
+
+        return $request->user()->isAdmin()
+                ? redirect('/dashboard') : redirect()->intended($this->redirectPath());
+    }
+
     protected function sendFailedLoginResponse(Request $request, $errors)
     {
         if ($errors) {
             throw ValidationException::withMessages($errors);
         }
-
-        throw ValidationException::withMessages([
-            $this->username() => [trans('auth.failed')],
-        ]);
     }    
 
     public function logout(Request $request)
