@@ -58,20 +58,28 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <span class="hidden-xs">Hello, Admin </span>
+              <span class="hidden-xs">Hello, {{ Auth::user()->name }} </span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
                 <img src="img/user-ico.jpg" class="img-circle" alt="User Image">
                 <p>
-                  Administrator
+                  {{ Auth::user()->name }}
                 </p>
               </li>
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="text-right">
-                  <a href="login.php" class="btn btn-danger btn-flat">Sign out</a>
+                      <a class="btn btn-danger btn-flat" href="{{ route('logout') }}"
+                          onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();">
+                          Sign Out
+                      </a>
+
+                      <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                          @csrf
+                      </form>
                 </div>
               </li>
             </ul>
@@ -115,10 +123,8 @@
             <div class="box-header with-border">
               <h1 class="font-18 m-0">Timedoor Challenge - Level 9</h1>
             </div>
-            <form method="" action="">
               <div class="box-body">
                 <div class="bordered-box mb-20">
-                  <form class="form" role="form">
                     <table class="table table-no-border mb-0">
                       <tbody>
                         <tr>
@@ -178,14 +184,12 @@
                         </tr>
                       </tbody>
                     </table>
-                  </form>
                 </div>
-                <form id="formMultiple" method="POST" action="{{ route('dashboard.destroy.multiple' )}}">
-                @csrf
+                <form id="formTable" method="POST">
                 <table class="table table-bordered">
                   <thead>
                     <tr>
-                      <th><input type="checkbox"></th>
+                      <th><input type="checkbox" onclick="toggle(this)"></th>
                       <th>ID</th>
                       <th>Title</th>
                       <th>Body</th>
@@ -195,6 +199,7 @@
                     </tr>
                   </thead>
                   <tbody>
+                  @csrf
                   @foreach ($boards as $board)
                     <tr {!! $board->trashed() ? "class='bg-gray-light'" : '' !!}>
                       <td>{!! $board->trashed() ? "&nbsp;" : "
@@ -208,7 +213,8 @@
                             file_exists('storage/image/board/thumbnail/' . $board->image))
                             <img class="img-prev" style="width:130px"
                             src="{{ url('storage/image/board/thumbnail/' . $board->image) }}" alt="image">
-                            <a id="deleteImage" onclick="destroyImage()" href="#" data-toggle="modal" data-target="#deleteModal" data-id="{{ $board->id }}" 
+                            <a id="deleteImage" onclick="destroyImage()" href="#" data-toggle="modal" 
+                            data-target="#deleteModal" data-id="{{ $board->id }}" 
                             class="btn btn-danger ml-10 btn-img" rel="tooltip" title="Delete Image">
                               <i class="fa fa-trash"></i>
                             </a>
@@ -219,9 +225,10 @@
                       <td>{{ date('Y/m/d', strtotime($board->created_at)) }}<br>
                       <span class="small">{{ date('H:i:s', strtotime($board->created_at)) }}</span></td>
                       @if ($board->trashed())
-                        <td><a href="#" class="btn btn-default" rel="tooltip" title="Recover">
-                          <i class="fa fa-repeat"></i>
-                        </a></td>
+                          <td><button formaction="{{ route('dashboard.restore', $board->id )}}"
+                          class="btn btn-default" rel="tooltip" title="Recover">
+                            <i class="fa fa-repeat"></i>
+                          </button></td>
                       @else
                         <td><a id="delete" onclick="destroy()" href="#" data-id="{{ $board->id }}"
                         data-toggle="modal" data-target="#deleteModal" 
@@ -231,15 +238,16 @@
                       @endif
                     </tr>
                   @endforeach
-                  </form>
                   </tbody>
                 </table>
-                <a id="deleteCheck" href="#" onclick="destroyMultiple()" class="btn btn-default mt-5" data-toggle="modal" data-target="#deleteModal">Delete Checked Items</a>
+                </form>
+                <a id="deleteCheck" href="#" onclick="destroyMultiple()" 
+                class="btn btn-default mt-5" data-toggle="modal" 
+                data-target="#deleteModal">Delete Checked Items</a>
                 <div class="text-center">
                   {{ $boards->links() }}
                 </div>
               </div>
-            </form>
           </div>
         </div><!-- /.col-xs-12 -->
       </div>
@@ -257,8 +265,6 @@
 
 
   <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <form id="formDelete" method="POST">
-      @csrf
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -272,11 +278,10 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button id="formDeleteBtn" class="btn btn-danger">Delete</button>
+            <button id="formDeleteBtn" onclick="deleteBoard()" class="btn btn-danger">Delete</button>
           </div>
         </div>
       </div>
-    </form>
   </div>
 </div>
 @endsection
@@ -319,21 +324,36 @@
       // DISPLAY MODAL WITH FORM ACTION
       function destroyImage() {
         id = document.getElementById("deleteImage").dataset.id;
-        document.getElementById("formDelete")
-        .action = "dashboard/destroy/image/" + id;
+        table = document.getElementById("formTable");
+        table.action = "dashboard/destroy/image/" + id;
+      }
+
+      function deleteBoard() {
+          document.getElementById("formTable").submit();
       }
 
       function destroy() {
         id = document.getElementById("delete").dataset.id;
-        document.getElementById("formDelete")
-        .action = "dashboard/destroy/" + id;
+        table = document.getElementById("formTable");
+        table.action = "dashboard/destroy/" + id;
       }
 
       function destroyMultiple() {
-        document.getElementById("formDeleteBtn").type = "button";
-        document.getElementById("formDeleteBtn")
-        .onclick = function() { document.getElementById("formMultiple").submit(); };
+        table = document.getElementById("formTable");
+        table.action = "dashboard/destroy-multiple";
       }
 
+      function toggle(source) {
+        boxes = document.getElementsByName("checked[]");
+
+        for(var i = 0, n = boxes.length; i<n; i++) {
+          boxes[i].checked = source.checked;
+        }
+      }
     </script>
+    @if (Session::has('bruh'))
+    <script>
+        alert("{{Session::get('bruh')}}");
+    </script>
+    @endif
 @endsection

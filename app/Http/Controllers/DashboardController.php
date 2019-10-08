@@ -17,13 +17,23 @@ class DashboardController extends Controller
     {
         $boards = $board->withTrashed()->latest()->paginate(20)->onEachSide(2);
 
-        return view('content/dashboard')->with('boards', $boards);;
+        return view('content/dashboard')->with('boards', $boards);
     }
 
-    public function destroy(Board $board, $id)
+    public function search(Board $board)
     {
-        $board->destroy($id);
+        $boards = $board->withTrashed()->latest()->paginate(20)->onEachSide(2);
 
+        return view('content/dashboard')->with('boards', $boards);
+    }
+
+    public function destroy(Board $boards, $id)
+    {
+        $board = $boards->find($id);
+        Storage::delete("public/image/board/{$board->image}");
+        Storage::delete("public/image/board/thumbnail/{$board->image}");
+        $board->delete();
+        
         return back();
     }
 
@@ -39,8 +49,16 @@ class DashboardController extends Controller
         return back();
     }
 
-    public function destroyMultiple()
+    public function destroyMultiple(Request $request)
     {
+        Board::whereIn('id', $request->checked)->delete();
+        return back();
+    }
+
+    public function restore(Board $board, $id)
+    {
+        $board->withTrashed()->find($id)->restore();
+
         return back();
     }
 }

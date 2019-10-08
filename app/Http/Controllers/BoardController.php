@@ -167,6 +167,8 @@ class BoardController extends Controller
         $check = $this->checkPassword($board->password, $request->submitPass, 'delete');
 
         if (is_null($check['passErr']) || (($request->user()->id ?? false) === $board->user_id)) {
+            Storage::delete("public/image/board/{$board->image}");
+            Storage::delete("public/image/board/thumbnail/{$board->image}");
             Board::destroy($id);
         }
 
