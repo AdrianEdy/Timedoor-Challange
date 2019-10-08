@@ -124,19 +124,21 @@
               <h1 class="font-18 m-0">Timedoor Challenge - Level 9</h1>
             </div>
               <div class="box-body">
+                <form method="POST" action="{{ route('dashboard.search')}} ">
+                @csrf
                 <div class="bordered-box mb-20">
                     <table class="table table-no-border mb-0">
                       <tbody>
                         <tr>
                           <td width="80"><b>Title</b></td>
                           <td><div class="form-group mb-0">
-                            <input type="text" class="form-control">
+                            <input type="text" name="title" class="form-control">
                             </div></td>
                         </tr>
                         <tr>
                           <td><b>Body</b></td>
                           <td><div class="form-group mb-0">
-                            <input type="text" class="form-control">
+                            <input type="text" name="message" class="form-control">
                             </div></td>
                         </tr>
                       </tbody>
@@ -147,17 +149,17 @@
                           <td width="80"><b>Image</b></td>
                           <td width="60">
                             <label class="radio-inline">
-                              <input type="radio" name="imageOption" id="inlineRadio1" value="option1"> with
+                              <input type="radio" name="imageOption" id="inlineRadio1" value="with"> with
                             </label>
                           </td>
                           <td width="80">
                             <label class="radio-inline">
-                              <input type="radio" name="imageOption" id="inlineRadio2" value="option2"> without
+                              <input type="radio" name="imageOption" id="inlineRadio2" value="without"> without
                             </label>
                           </td>
                           <td>
                             <label class="radio-inline">
-                              <input type="radio" name="imageOption" id="inlineRadio3" value="option3" checked> unspecified
+                              <input type="radio" name="imageOption" id="inlineRadio3" value="null" checked> unspecified
                             </label>
                           </td>
                         </tr>
@@ -165,26 +167,29 @@
                           <td width="80"><b>Status</b></td>
                           <td>
                             <label class="radio-inline">
-                              <input type="radio" name="statusOption" id="inlineRadio1" value="option1"> on
+                              <input type="radio" name="statusOption" id="inlineRadio1" value="on"> on
                             </label>
                           </td>
                           <td>
                             <label class="radio-inline">
-                              <input type="radio" name="statusOption" id="inlineRadio2" value="option2"> delete
+                              <input type="radio" name="statusOption" id="inlineRadio2" value="delete"> delete
                             </label>
                           </td>
                           <td>
                             <label class="radio-inline">
-                              <input type="radio" name="statusOption" id="inlineRadio3" value="option3" checked> unspecified
+                              <input type="radio" name="statusOption" id="inlineRadio3" value="null" checked> unspecified
                             </label>
                           </td>
                         </tr>
                         <tr>
-                          <td><a href="#" class="btn btn-default mt-10"><i class="fa fa-search"></i> Search</a></td>
+                          <td><button href="#" class="btn btn-default mt-10"><i class="fa fa-search">
+                            </i> Search</button>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
                 </div>
+                </form>
                 <form id="formTable" method="POST">
                 <table class="table table-bordered">
                   <thead>
