@@ -190,6 +190,7 @@
                     </table>
                 </div>
                 </form>
+                @if (! $boards->isEmpty())
                 <form id="formTable" method="POST">
                 <table class="table table-bordered">
                   <thead>
@@ -252,6 +253,9 @@
                 <div class="text-center">
                   {{ $boards->links() }}
                 </div>
+                @else
+                  No Data Found
+                @endif
               </div>
           </div>
         </div><!-- /.col-xs-12 -->
