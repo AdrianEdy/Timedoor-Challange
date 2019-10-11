@@ -17,7 +17,7 @@ class BoardController extends Controller
     {
         $boards = $board->latest()->paginate(10)->onEachSide(2);
 
-        return view('user/content/home')->with('boards', $boards);
+        return view('user/content/home', compact('boards'));
     }
 
     public function store(Request $request, Board $board)
@@ -48,7 +48,7 @@ class BoardController extends Controller
             $thumbnail = Image::make(Storage::get("public/" 
                        . $board->getImageFolder() . $imageName));
 
-            $path = storage_path('app/public/image/board/thumbnail');
+            $path = storage_path('app/public/' . $board->getImageFolder() . 'thumbnail');
             
             if (! File::exists($path)) File::makeDirectory($path, 775, true);
 
@@ -64,33 +64,22 @@ class BoardController extends Controller
     public function edit(Request $request, $id)
     {   
         try {
-            $board         = Board::findOrFail($id, 
-                            ['id', 'user_id', 'name', 'title', 'message', 'image']);
+            $board = Board::findOrFail($id);
         } catch (ModelNotFoundException $e) {
-            return back()->withError($e->getMessage());
+            return back()->withError("There is no board was found");
         }
 
-        $boardPassword = Board::where('id', $id)->value('password');
+        if (! (($request->user()->id ?? false) === $board->user_id)) {
+            $check = $this->checkPassword($board->password, $request->submitPass, 'edit');
 
-        $check         = $this->checkPassword($boardPassword, 
-                         $request->submitPass, 'edit');
-
-        if (($request->user()->id ?? false) === $board->user_id) {
-            return back()
-                ->with('board', $board)
-                ->with('submitPass', $request->submitPass)
-                ->with('modal', 'edit');
+            if ($check['passErr']) {
+                return back()
+                    ->with('board', $board)
+                    ->with('modal', 'edit')
+                    ->with('passErr', $check['passErr'])
+                    ->with('message', $check['message']);
+            } 
         }
-        
-        $check = $this->checkPassword($boardPassword, $request->submitPass, 'edit');
-
-        if ($check['passErr']) {
-            return back()
-                ->with('board', $board)
-                ->with('modal', 'edit')
-                ->with('passErr', $check['passErr'])
-                ->with('message', $check['message']);
-        } 
 
         return back()
             ->with('board', $board)
@@ -100,34 +89,35 @@ class BoardController extends Controller
 
     public function update(BoardModalRequest $request, $id)
     {
-        $board         = Board::find($id, ['id', 'user_id', 'name', 'title', 'message', 'image']);
-        $boardPassword = Board::where('id', $id)->value('password');
-        $check         = $this->checkPassword($boardPassword, $request->submitPass, 'edit');
+        try {
+            $board = Board::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return back()->withError("There is no board was found");
+        }
+
+        $check = $this->checkPassword($board->password, $request->submitPass, 'edit');
 
         if (! (is_null($check['passErr']) || (($request->user()->id ?? false) === $board->user_id))) {
             return back();
         }
         
+        $image = null;
         if ($request->has('deleteImage')) {
-            Storage::delete("public/image/board/{$board->image}");
-            Storage::delete("public/image/board/thumbnail/{$board->image}");
-            Board::where('id', $id)->update([
-                'image' => null
-            ]);
+            Storage::delete("public/" . $board->getImageFolder() . $board->image);
+            Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$board->image}");
         } else {
             $imageName = $request->editImage ? uniqid('img_') . '.' 
                        . $request->editImage->getClientOriginalExtension() : null;
-            Board::where('id', $id)->update([
-                'image' => $request->editImage ? $imageName : $board->image
-            ]);
+            $image     = $request->editImage ? $imageName : $board->image;
+
             if ($request->editImage) {
-                Storage::delete("public/image/board/{$board->image}");
-                Storage::delete("public/image/board/thumbnail/{$board->image}");
+                Storage::delete("public/" . $board->getImageFolder() . $board->image);
+                Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$board->image}");
 
                 $request->editImage->storeAs('image/board', $imageName, 'public');
 
-                $thumbnail = Image::make(Storage::get("public/image/board/{$imageName}"));
-                $path      = storage_path('app/public/image/board/thumbnail');
+                $thumbnail = Image::make(Storage::get("public/" . $board->getImageFolder() . $imageName));
+                $path      = storage_path("app/public/" . $board->getImageFolder() . "thumbnail");
 
                 if (! File::exists($path)) File::makeDirectory($path, 775, true);
 
@@ -137,9 +127,10 @@ class BoardController extends Controller
         }
 
         Board::where('id', $id)->update([
-            'name' => $request->editName,
-            'title' => $request->editTitle,
-            'message' => $request->editBody
+            'name'    => $request->editName,
+            'title'   => $request->editTitle,
+            'message' => $request->editBody,
+            'image'   => $image
         ]);
 
         return back();
@@ -147,25 +138,23 @@ class BoardController extends Controller
 
     public function delete(Request $request, $id)
     {
-        $board         = Board::find($id, ['id', 'user_id', 'name', 'title', 'message', 'image']);
-        $boardPassword = Board::where('id', $id)->value('password');
-
-        if (($request->user()->id ?? false) === $board->user_id) {
-            return back()
-                ->with('board', $board)
-                ->with('submitPass', $request->submitPass)
-                ->with('modal', 'delete');
+        try {
+            $board = Board::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return back()->withError("There is no board was found");
         }
 
-        $check = $this->checkPassword($boardPassword, $request->submitPass, 'delete');
+        if (! (($request->user()->id ?? false) === $board->user_id)) {
+            $check = $this->checkPassword($board->password, $request->submitPass, 'delete');
         
-        if ($check['passErr']) {
-            return back()
-                ->with('board', $board)
-                ->with('modal', 'delete')
-                ->with('passErr', $check['passErr'])
-                ->with('message', $check['message']);
-        } 
+            if ($check['passErr']) {
+                return back()
+                    ->with('board', $board)
+                    ->with('modal', 'delete')
+                    ->with('passErr', $check['passErr'])
+                    ->with('message', $check['message']);
+            } 
+        }
 
         return back()
             ->with('board', $board)
@@ -179,8 +168,8 @@ class BoardController extends Controller
         $check = $this->checkPassword($board->password, $request->submitPass, 'delete');
 
         if (is_null($check['passErr']) || (($request->user()->id ?? false) === $board->user_id)) {
-            Storage::delete("public/image/board/{$board->image}");
-            Storage::delete("public/image/board/thumbnail/{$board->image}");
+            Storage::delete("public/" . $board->getImageFolder() . $board->image);
+            Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$board->image}");
             $board->update([
                 'image' => null
             ]);
