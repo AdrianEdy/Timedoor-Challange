@@ -48,14 +48,14 @@ class DashboardController extends Controller
 
         $boards = $boards->latest()->paginate(20)->onEachSide(2);
 
-        return view('admin/content/dashboard')->with('boards', $boards);
+        return view('admin/content/dashboard', compact('boards'));
     }
 
-    public function destroy(Board $boards, $id)
+    public function destroy(Board $board, $id)
     {
-        $board = $boards->find($id);
-        Storage::delete("public/image/board/{$board->image}");
-        Storage::delete("public/image/board/thumbnail/{$board->image}");
+        $findBoard = $board->find($id);
+        Storage::delete("public/" . $findBoard->getImageFolder() . $findBoard->image);
+        Storage::delete("public/" . $findBoard->getImageFolder() . "thumbnail/{$findBoard->image}");
         $board->delete();
         
         return back();
@@ -64,8 +64,8 @@ class DashboardController extends Controller
     public function destroyImage($id)
     {
         $board = Board::find($id);
-        Storage::delete("public/image/board/{$board->image}");
-        Storage::delete("public/image/board/thumbnail/{$board->image}");
+        Storage::delete("public/" . $board->getImageFolder() . $board->image);
+        Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$board->image}");
         $board->update([
             'image' => null
         ]);
@@ -77,8 +77,8 @@ class DashboardController extends Controller
     {
         foreach ($request->checked as $check) {
             $board = Board::find($check);
-            Storage::delete("public/image/board/{$board->image}");
-            Storage::delete("public/image/board/thumbnail/{$board->image}");
+            Storage::delete("public/" . $board->getImageFolder() . $board->image);
+            Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$board->image}");
             $board->update([
                 'image' => null
             ]);
