@@ -89,7 +89,7 @@ class LoginController extends Controller
         $this->clearLoginAttempts($request);
 
         return $request->user()->isAdmin()
-                ? redirect('/dashboard') : redirect()->intended($this->redirectPath());
+                ? redirect(route('dashboard')) : redirect()->intended($this->redirectPath());
     }
 
     protected function sendFailedLoginResponse(Request $request, $errors)

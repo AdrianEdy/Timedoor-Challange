@@ -11,27 +11,27 @@
   <title>Timedoor Admin | Dashboard</title>
 
   <!-- Bootstrap 3.3.7 -->
-  <link rel="stylesheet" href="plugin/bootstrap/bootstrap.css">
+  <link rel="stylesheet" href="{{ asset('plugin/bootstrap/bootstrap.css') }}">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="plugin/font-awesome/font-awesome.min.css">
+  <link rel="stylesheet" href="{{ asset('plugin/font-awesome/font-awesome.min.css') }}">
   <!-- Ionicons -->
-  <link rel="stylesheet" href="plugins/Ionicons/ionicons.min.css">
+  <link rel="stylesheet" href="{{ asset('plugin/Ionicons/ionicons.min.css') }}">
   <!-- Theme style -->
-  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
   <!-- TMDR Preset -->
-  <link rel="stylesheet" href="css/tmdrPreset.css">
+  <link rel="stylesheet" href="{{ asset('css/tmdrPreset.css') }}">
   <!-- Custom css -->
-  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
   <!-- Skin -->
-  <link rel="stylesheet" href="css/skin.css">
+  <link rel="stylesheet" href="{{ asset('css/skin.css') }}">
   <!-- Date Picker -->
-  <link rel="stylesheet" href="plugin/bootstrap-datepicker/bootstrap-datetimepicker.min.css">
+  <link rel="stylesheet" href="{{ asset('plugin/bootstrap-datepicker/bootstrap-datetimepicker.min.css') }}">
   <!-- Daterange picker -->
-  <link rel="stylesheet" href="plugin/daterangepicker/daterangepicker.css">
+  <link rel="stylesheet" href="{{ asset('plugin/daterangepicker/daterangepicker.css') }}">
   <!-- DataTable -->
-  <link rel="stylesheet" href="plugin/datatable/datatables.min.css">
+  <link rel="stylesheet" href="{{ asset('plugin/datatable/datatables.min.css') }}">
   <!-- DataTable -->
-  <link rel="stylesheet" href="plugin/selectpicker/bootstrap-select.css">
+  <link rel="stylesheet" href="{{ asset('plugin/selectpicker/bootstrap-select.css') }}">
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -77,7 +77,7 @@
               <ul class="dropdown-menu">
                 <!-- User image -->
                 <li class="user-header">
-                  <img src="img/user-ico.jpg" class="img-circle" alt="User Image">
+                  <img src="{{ asset('img/user-ico.jpg') }}" class="img-circle" alt="User Image">
                   <p>
                     {{ Auth::user()->name }}
                   </p>

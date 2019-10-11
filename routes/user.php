@@ -31,12 +31,3 @@ Route::post('delete/{id}', 'BoardController@delete')->name('delete');
 Route::post('destroy/{id}', 'BoardController@destroy')->name('destroy');
 Route::post('edit/{id}', 'BoardController@edit')->name('edit');
 Route::post('update/{id}', 'BoardController@update')->name('update');
-
-// Dashboard routes
-Route::get('dashboard', 'DashboardController@index')->name('dashboard');
-Route::post('dashboard', 'DashboardController@search')->name('dashboard.search');
-Route::post('dashboard/destroy/{id}', 'DashboardController@destroy')->name('dashboard.destroy');
-Route::post('dashboard/destroy-multiple', 'DashboardController@destroyMultiple')->name('dashboard.destroy.multiple');
-Route::post('dashboard/destroy/image/{id}', 'DashboardController@destroyImage')->name('dashboard.destroy.image');
-Route::post('dashboard/restore/{id}', 'DashboardController@restore')->name('dashboard.restore');
-
