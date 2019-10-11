@@ -107,9 +107,9 @@
                   <td>{!! nl2br(e($board->message)) !!}</td>
                   <td>
                     @if (!is_null($board->image) &&
-                    file_exists('storage/image/board/thumbnail/' . $board->image))
+                    file_exists('storage/' . $board->getImageFolder() . 'thumbnail/' . $board->image))
                     <img class="img-prev" style="width:130px"
-                      src="{{ url('storage/image/board/thumbnail/' . $board->image) }}" alt="image">
+                      src="{{ url('storage/' . $board->getImageFolder() . 'thumbnail/' . $board->image) }}" alt="image">
                     <a id="deleteImage" onclick="destroyImage()" href="#" data-toggle="modal" data-target="#deleteModal"
                       data-id="{{ $board->id }}" class="btn btn-danger ml-10 btn-img" rel="tooltip"
                       title="Delete Image">

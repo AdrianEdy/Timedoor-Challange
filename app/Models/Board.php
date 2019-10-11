@@ -11,8 +11,15 @@ class Board extends Model
 
     protected $guarded = [];
 
+    private $imageFolder = 'image/board/';
+
     public function user()
     {
         return $this->belongTo('App\User');
+    }
+
+    public function getImageFolder()
+    {
+        return $this->imageFolder;
     }
 }

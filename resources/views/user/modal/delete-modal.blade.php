@@ -29,9 +29,9 @@
                     <div class="form-group">
                         <label>Image</label>
                         @if (!is_null(Session::get('board')->image) &&
-                        file_exists('storage/image/board/' . Session::get('board')->image))
+                        file_exists('storage/' . $board->getImageFolder() . Session::get('board')->image))
                         <img class="img-responsive modal-image"
-                            src="{{ url('storage/image/board/' . Session::get('board')->image) }}" alt="image">
+                            src="{{ url('storage/' . $board->getImageFolder() . Session::get('board')->image) }}" alt="image">
                         @else
                         <img class="img-responsive modal-image" src="{{ url('storage/image/image-not-available.jpg') }}"
                             alt="image">

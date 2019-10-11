@@ -16,6 +16,7 @@ class BoardController extends Controller
     public function index(Board $board)
     {
         $boards = $board->latest()->paginate(10)->onEachSide(2);
+
         return view('user/content/home')->with('boards', $boards);
     }
 
@@ -42,14 +43,18 @@ class BoardController extends Controller
         ]);
 
         if ($request->image) {
-            $request->image->storeAs('image/board', $imageName, 'public');
+            $request->image->storeAs($board->getImageFolder(), $imageName, 'public');
 
-            $thumbnail = Image::make(Storage::get("public/image/board/{$imageName}"));
+            $thumbnail = Image::make(Storage::get("public/" 
+                       . $board->getImageFolder() . $imageName));
 
             $path = storage_path('app/public/image/board/thumbnail');
+            
             if (! File::exists($path)) File::makeDirectory($path, 775, true);
 
-            $thumbnail->resize(250,250);
+            $thumbnail->resize(250, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
             $thumbnail->save($path . '/' . $imageName);
         }
         

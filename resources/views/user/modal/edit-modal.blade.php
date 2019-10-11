@@ -42,9 +42,9 @@
                             $imageName = Session::get('board')->image ?? old('editImageName');
                         ?>
                             @if (!is_null($imageName) &&
-                            file_exists('storage/image/board/' . $imageName))
-                            <img class="img-responsive modal-image" src="{{ url('storage/image/board/' . $imageName) }}"
-                                alt="image">
+                            file_exists('storage/' . $board->getImageFolder() . $imageName))
+                            <img class="img-responsive modal-image"
+                                src="{{ url('storage/' . $board->getImageFolder() . $imageName) }}" alt="image">
                             @else
                             <img class="img-responsive modal-image"
                                 src="{{ url('storage/image/image-not-available.jpg') }}" alt="image">

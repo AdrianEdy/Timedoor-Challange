@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
 <body>
     <main>
         <div class="section">
@@ -90,9 +91,10 @@
                             </p>
                             <div class="img-box my-10">
                                 @if (!is_null($board->image) &&
-                                file_exists('storage/image/board/thumbnail/' . $board->image))
+                                file_exists('storage/' . $board->getImageFolder() . $board->image))
                                 <img class="img-responsive"
-                                    src="{{ url('storage/image/board/thumbnail/' . $board->image) }}" alt="image">
+                                    src="{{ url('storage/' . $board->getImageFolder() . 'thumbnail/' . $board->image) }}"
+                                    alt="image">
                                 @else
                                 <img class="img-responsive" src="{{ url('storage/image/image-not-available.jpg') }}"
                                     alt="image">
@@ -142,31 +144,31 @@
 
 @section('modal')
 @if(Session::has('modal'))
-    @if(Session::get('modal') === 'edit')
-        @if(is_null(Session::get('passErr')))
-            @include('user/modal/edit-modal')
-        @else
-            @include('user/modal/wrong-edit-modal')
-        @endif
-    @elseif(Session::get('modal') === 'delete')
-        @if(is_null(Session::get('passErr')))
-            @include('user/modal/delete-modal')
-        @else
-            @include('user/modal/wrong-delete-modal')
-        @endif
-    @endif
-    <script>
-        $('#modal').modal('show');
-    </script>
+@if(Session::get('modal') === 'edit')
+@if(is_null(Session::get('passErr')))
+@include('user/modal/edit-modal')
+@else
+@include('user/modal/wrong-edit-modal')
+@endif
+@elseif(Session::get('modal') === 'delete')
+@if(is_null(Session::get('passErr')))
+@include('user/modal/delete-modal')
+@else
+@include('user/modal/wrong-delete-modal')
+@endif
+@endif
+<script>
+    $('#modal').modal('show');
+</script>
 @endif
 
 @if($errors->has('errorModal'))
-    @if(strpos($errors->first('errorModal'), 'update'))
-        @include('user/modal/edit-modal')
-    @endif
-    <script>
-        $('#modal').modal('show');
-    </script>
+@if(strpos($errors->first('errorModal'), 'update'))
+@include('user/modal/edit-modal')
+@endif
+<script>
+    $('#modal').modal('show');
+</script>
 @endif
 @endsection
 
