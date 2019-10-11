@@ -17,7 +17,7 @@ class DashboardController extends Controller
     {
         $boards = $board->withTrashed()->latest()->paginate(20)->onEachSide(2);
 
-        return view('content/dashboard')->with('boards', $boards);
+        return view('admin/content/dashboard')->with('boards', $boards);
     }
 
     public function search(Request $request, Board $board)
@@ -48,7 +48,7 @@ class DashboardController extends Controller
 
         $boards = $boards->latest()->paginate(20)->onEachSide(2);
 
-        return view('content/dashboard')->with('boards', $boards);
+        return view('admin/content/dashboard')->with('boards', $boards);
     }
 
     public function destroy(Board $boards, $id)

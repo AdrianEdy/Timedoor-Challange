@@ -176,7 +176,10 @@ class BoardController extends Controller
         if (is_null($check['passErr']) || (($request->user()->id ?? false) === $board->user_id)) {
             Storage::delete("public/image/board/{$board->image}");
             Storage::delete("public/image/board/thumbnail/{$board->image}");
-            Board::destroy($id);
+            $board->update([
+                'image' => null
+            ]);
+            $board->delete($id);
         }
 
         return back();
@@ -192,7 +195,7 @@ class BoardController extends Controller
                      .", because this message has not been set password";
             $passErr = 'not set';
         } else {
-            if (!Hash::check($requestPassword, $boardPassword)) {
+            if (! Hash::check($requestPassword, $boardPassword)) {
                 $message = "The password you entered do not match, Please try again";
                 $passErr = 'wrong';
             } 
