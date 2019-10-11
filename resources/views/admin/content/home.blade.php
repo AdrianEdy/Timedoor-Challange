@@ -253,6 +253,11 @@
 @endsection
 
 @section('footer-script')
+    @if (session('error'))
+        <script>
+            alert("{{ session('error')}}");
+        </script>
+    @endif
     <script>
         $(document).on('change', '.btn-file :file', function() {
             var input = $(this),

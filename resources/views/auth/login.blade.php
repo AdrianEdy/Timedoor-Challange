@@ -11,9 +11,9 @@
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
                     @error('verified')
-                        <div class="form-group" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </div>
+                    <div class="form-group" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </div>
                     @enderror
                     <div class="form-group row">
                         <label for="email" class="col-md-4 col-form-label text-md-right">
@@ -21,9 +21,9 @@
                         </label>
                         <div class="col-md-6">
                             <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                            name="email" value="{{ old('email') }}" required autocomplete="email" autofocus> 
+                                name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                             @error('email')
-                                <p class="small text-danger mt-5">{{ $message }}</p>
+                            <p class="small text-danger mt-5">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
@@ -31,17 +31,18 @@
                         <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
                         <div class="col-md-6">
                             <input id="password" type="password"
-                            class="form-control @error('password') is-invalid @enderror" name="password"
-                            required autocomplete="current-password">
+                                class="form-control @error('password') is-invalid @enderror" name="password" required
+                                autocomplete="current-password">
                             @error('password')
-                                <p class="small text-danger mt-5">{{ $message }}</p>
+                            <p class="small text-danger mt-5">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-6 offset-md-4">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                <input class="form-check-input" type="checkbox" name="remember" id="remember"
+                                    {{ old('remember') ? 'checked' : '' }}>
                                 <label class="form-check-label" for="remember">
                                     {{ __('Remember Me') }}
                                 </label>
@@ -60,13 +61,4 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('style')
-    <!-- CSS -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/font-awesome.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/tmdrPreset.css') }}">
-    <!-- CSS End -->
 @endsection

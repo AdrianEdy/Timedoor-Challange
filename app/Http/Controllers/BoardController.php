@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\BoardModalRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Board;
 use Image;
 use File;
@@ -15,7 +16,7 @@ class BoardController extends Controller
     public function index(Board $board)
     {
         $boards = $board->latest()->paginate(10)->onEachSide(2);
-        return view('content/home')->with('boards', $boards);
+        return view('user/content/home')->with('boards', $boards);
     }
 
     public function store(Request $request, Board $board)
@@ -56,10 +57,16 @@ class BoardController extends Controller
     }
 
     public function edit(Request $request, $id)
-    {
-        $board         = Board::find($id, 
-                         ['id', 'user_id', 'name', 'title', 'message', 'image']);
+    {   
+        try {
+            $board         = Board::findOrFail($id, 
+                            ['id', 'user_id', 'name', 'title', 'message', 'image']);
+        } catch (ModelNotFoundException $e) {
+            return back()->withError($e->getMessage());
+        }
+
         $boardPassword = Board::where('id', $id)->value('password');
+
         $check         = $this->checkPassword($boardPassword, 
                          $request->submitPass, 'edit');
 
