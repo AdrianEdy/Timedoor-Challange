@@ -22,6 +22,7 @@ class CreateBoardsTable extends Migration
             $table->string('image', 255)->nullable();
             $table->string('password', 255)->nullable();
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('user_id')->references('id')->on('users');
         });
     }
