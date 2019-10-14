@@ -9,14 +9,14 @@
         @csrf
         <div class="login-box-body">
             <div class="form-group">
-                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name"
+                <input type="text" class="form-control" name="name"
                     value="{{ old('name') }}" required autocomplete="name" autofocus placeholder="Name">
                 @error('name')
                 <p class="small text-danger mt-5">{{ $message }}</p>
                 @enderror
             </div>
             <div class="form-group">
-                <input type="text" class="form-control @error('email') is-invalid @enderror" name="email"
+                <input type="text" class="form-control" name="email"
                     value="{{ old('email') }}" required autocomplete="email" placeholder="E-mail">
                 @error('email')
                 <p class="small text-danger mt-5">{{ $message }}</p>
