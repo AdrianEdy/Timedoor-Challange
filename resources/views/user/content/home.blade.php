@@ -1,7 +1,6 @@
-@extends('layouts.app')
+@extends('user.layout')
 
 @section('content')
-
 <body>
     <main>
         <div class="section">
@@ -143,33 +142,33 @@
 @endsection
 
 @section('modal')
-@if(Session::has('modal'))
-@if(Session::get('modal') === 'edit')
-@if(is_null(Session::get('passErr')))
-@include('user/modal/edit-modal')
-@else
-@include('user/modal/wrong-edit-modal')
-@endif
-@elseif(Session::get('modal') === 'delete')
-@if(is_null(Session::get('passErr')))
-@include('user/modal/delete-modal')
-@else
-@include('user/modal/wrong-delete-modal')
-@endif
-@endif
-<script>
-    $('#modal').modal('show');
-</script>
-@endif
+    @if(Session::has('modal'))
+        @if(Session::get('modal') === 'edit')
+            @if(is_null(Session::get('passErr')))
+                @include('user/modal/edit-modal')
+            @else
+                @include('user/modal/wrong-edit-modal')
+            @endif
+        @elseif(Session::get('modal') === 'delete')
+            @if(is_null(Session::get('passErr')))
+                @include('user/modal/delete-modal')
+            @else
+                @include('user/modal/wrong-delete-modal')
+            @endif
+        @endif
+        <script>
+            $('#modal').modal('show');
+        </script>
+    @endif
 
-@if($errors->has('errorModal'))
-@if(strpos($errors->first('errorModal'), 'update'))
-@include('user/modal/edit-modal')
-@endif
-<script>
-    $('#modal').modal('show');
-</script>
-@endif
+    @if($errors->has('errorModal'))
+        @if(strpos($errors->first('errorModal'), 'update'))
+            @include('user/modal/edit-modal')
+        @endif
+        <script>
+            $('#modal').modal('show');
+        </script>
+    @endif
 @endsection
 
 @section('header')
