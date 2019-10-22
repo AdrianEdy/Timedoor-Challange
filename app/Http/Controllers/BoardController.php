@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Board;
-use Image;
-use File;
 
 class BoardController extends Controller
 {
@@ -41,22 +39,6 @@ class BoardController extends Controller
             'image'    => $imageName,
             'password' => $request->password ? Hash::make($request->password) : null
         ]);
-
-        if ($request->image) {
-            $request->image->storeAs($board->getImageFolder(), $imageName, 'public');
-
-            $thumbnail = Image::make(Storage::get("public/" 
-                       . $board->getImageFolder() . $imageName));
-
-            $path = storage_path('app/public/' . $board->getImageFolder() . 'thumbnail');
-            
-            if (! File::exists($path)) File::makeDirectory($path, 775, true);
-
-            $thumbnail->resize(250, null, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-            $thumbnail->save($path . '/' . $imageName);
-        }
         
         return redirect('/');
     }
@@ -113,20 +95,10 @@ class BoardController extends Controller
             if ($request->editImage) {
                 Storage::delete("public/" . $board->getImageFolder() . $board->image);
                 Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$board->image}");
-
-                $request->editImage->storeAs('image/board', $imageName, 'public');
-
-                $thumbnail = Image::make(Storage::get("public/" . $board->getImageFolder() . $imageName));
-                $path      = storage_path("app/public/" . $board->getImageFolder() . "thumbnail");
-
-                if (! File::exists($path)) File::makeDirectory($path, 775, true);
-
-                $thumbnail->resize(250,250);
-                $thumbnail->save($path . '/' . $imageName);
             }
         }
 
-        Board::where('id', $id)->update([
+        $board->update([
             'name'    => $request->editName,
             'title'   => $request->editTitle,
             'message' => $request->editBody,
@@ -168,8 +140,6 @@ class BoardController extends Controller
         $check = $this->checkPassword($board->password, $request->submitPass, 'delete');
 
         if (is_null($check['passErr']) || (($request->user()->id ?? false) === $board->user_id)) {
-            Storage::delete("public/" . $board->getImageFolder() . $board->image);
-            Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$board->image}");
             $board->update([
                 'image' => null
             ]);
