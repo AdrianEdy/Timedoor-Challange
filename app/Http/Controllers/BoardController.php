@@ -84,18 +84,10 @@ class BoardController extends Controller
         }
         
         $image = null;
-        if ($request->has('deleteImage')) {
-            Storage::delete("public/" . $board->getImageFolder() . $board->image);
-            Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$board->image}");
-        } else {
+        if (! $request->has('deleteImage')) {
             $imageName = $request->editImage ? uniqid('img_') . '.' 
                        . $request->editImage->getClientOriginalExtension() : null;
-            $image     = $request->editImage ? $imageName : $board->image;
-
-            if ($request->editImage) {
-                Storage::delete("public/" . $board->getImageFolder() . $board->image);
-                Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$board->image}");
-            }
+            $image     = $request->editImage ? $imageName : $board->image;;
         }
 
         $board->update([

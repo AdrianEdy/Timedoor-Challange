@@ -162,4 +162,6 @@
 </div>
 </div>
 
+@yield('script');
+
 </html>

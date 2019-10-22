@@ -54,9 +54,10 @@ class DashboardController extends Controller
     public function destroy(Board $board, $id)
     {
         $findBoard = $board->find($id);
-        Storage::delete("public/" . $findBoard->getImageFolder() . $findBoard->image);
-        Storage::delete("public/" . $findBoard->getImageFolder() . "thumbnail/{$findBoard->image}");
-        $board->delete();
+        $findBoard->update([
+            'image' => null
+        ]);
+        $findBoard->delete();
         
         return back();
     }
@@ -64,8 +65,6 @@ class DashboardController extends Controller
     public function destroyImage($id)
     {
         $board = Board::find($id);
-        Storage::delete("public/" . $board->getImageFolder() . $board->image);
-        Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$board->image}");
         $board->update([
             'image' => null
         ]);

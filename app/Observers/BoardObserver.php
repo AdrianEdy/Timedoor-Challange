@@ -46,10 +46,23 @@ class BoardObserver
      * @param  \App\Board  $board
      * @return void
      */
+    public function updating(Board $board)
+    {
+        $imageName  = $board->getOriginal('image');
+        $thisBoard  = $board->getDirty();
+        $imageNull  = is_null($thisBoard['image'] ?? null);
+        $request    = request();
+
+        if ($request->has('deleteImage') || $request->editImage || $imageNull) {
+            Storage::delete("public/" . $board->getImageFolder() . $imageName);
+            Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$imageName}");
+        }
+    }
+
     public function updated(Board $board)
     {
         $thisBoard  = $board->getDirty();
-        $imageName  = $thisBoard['image'];
+        $imageName  = $thisBoard['image'] ?? false;
         $request    = request();
 
         if ($request->editImage && $imageName) {
