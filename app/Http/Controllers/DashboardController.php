@@ -54,10 +54,7 @@ class DashboardController extends Controller
     public function destroy(Board $board, $id)
     {
         $findBoard = $board->find($id);
-        $findBoard->update([
-            'image' => null
-        ]);
-        $findBoard->delete();
+        $findBoard->deleteRecordAndImage();
         
         return back();
     }
@@ -65,9 +62,9 @@ class DashboardController extends Controller
     public function destroyImage($id)
     {
         $board = Board::find($id);
-        $board->update([
-            'image' => null
-        ]);
+        
+        // Add true parameter if you want to set image field to null in database
+        $board->deleteImage(true);
 
         return back();
     }
@@ -76,12 +73,7 @@ class DashboardController extends Controller
     {
         foreach ($request->checked as $check) {
             $board = Board::find($check);
-            Storage::delete("public/" . $board->getImageFolder() . $board->image);
-            Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$board->image}");
-            $board->update([
-                'image' => null
-            ]);
-            $board->delete();
+            $board->deleteRecordAndImage();
         }
         
         return back();

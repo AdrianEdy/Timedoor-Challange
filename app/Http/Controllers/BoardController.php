@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\BoardModalRequest;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Board;
 
@@ -31,7 +30,7 @@ class BoardController extends Controller
         $imageName       = $request->image ? uniqid('img_') . '.' 
                          . $request->image->getClientOriginalExtension() : null;
 
-        $board->create([
+        $board->createRecordAndImage([
             'user_id'  => $request->user()->id ?? null,
             'name'     => $request->name,
             'title'    => $request->title,
@@ -84,17 +83,20 @@ class BoardController extends Controller
         }
         
         $image = null;
+
         if (! $request->has('deleteImage')) {
             $imageName = $request->editImage ? uniqid('img_') . '.' 
                        . $request->editImage->getClientOriginalExtension() : null;
-            $image     = $request->editImage ? $imageName : $board->image;;
+            $image     = $request->editImage ? $imageName : $board->image;
+        } elseif ($request->has('deleteImage')) {
+            $board->deleteImage();
         }
 
-        $board->update([
+        $board->updateRecordAndImage([
             'name'    => $request->editName,
             'title'   => $request->editTitle,
             'message' => $request->editBody,
-            'image'   => $image
+            'image'   => $image 
         ]);
 
         return back();
@@ -132,10 +134,7 @@ class BoardController extends Controller
         $check = $this->checkPassword($board->password, $request->submitPass, 'delete');
 
         if (is_null($check['passErr']) || (($request->user()->id ?? false) === $board->user_id)) {
-            $board->update([
-                'image' => null
-            ]);
-            $board->delete($id);
+            $board->deleteRecordAndImage();
         }
 
         return back();

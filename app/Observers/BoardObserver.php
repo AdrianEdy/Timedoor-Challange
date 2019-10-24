@@ -6,7 +6,6 @@ use App\Models\Board;
 use Image;
 use Illuminate\Support\Facades\Storage;
 use File;
-use App\Http\Requests\BoardModalRequest;
 
 class BoardObserver
 {
@@ -53,7 +52,7 @@ class BoardObserver
         $imageNull  = is_null($thisBoard['image'] ?? null);
         $request    = request();
 
-        if ($request->has('deleteImage') || $request->editImage || $imageNull) {
+        if ($request->has('deleteImage') || $request->editImage) {
             Storage::delete("public/" . $board->getImageFolder() . $imageName);
             Storage::delete("public/" . $board->getImageFolder() . "thumbnail/{$imageName}");
         }
