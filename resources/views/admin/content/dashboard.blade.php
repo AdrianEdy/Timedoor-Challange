@@ -11,8 +11,7 @@
           <h1 class="font-18 m-0">Timedoor Challenge - Level 9</h1>
         </div>
         <div class="box-body">
-          <form method="POST" action="{{ route('dashboard.search')}} ">
-            @csrf
+          <form method="GET" action="{{ route('dashboard')}} ">
             <div class="bordered-box mb-20">
               <table class="table table-no-border mb-0">
                 <tbody>
