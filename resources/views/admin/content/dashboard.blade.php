@@ -201,6 +201,7 @@
           boxes[i].checked = source.checked;
         }
       }
+      alert("{{ request()->get('statusOption') }}")
 </script>
 @if (Session::has('bruh'))
 <script>
