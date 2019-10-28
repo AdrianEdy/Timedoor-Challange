@@ -151,7 +151,7 @@
             {{ $boards->links() }}
           </div>
           @else
-          No Data Found
+          <p style="font-size:3em; text-align:center; padding:20px;">No Data Found</p>
           @endif
         </div>
       </div>
