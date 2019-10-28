@@ -202,9 +202,4 @@
         }
       }
 </script>
-@if (Session::has('bruh'))
-<script>
-  alert("{{Session::get('bruh')}}");
-</script>
-@endif
 @endsection
