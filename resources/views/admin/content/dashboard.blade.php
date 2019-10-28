@@ -19,7 +19,8 @@
                     <td width="80"><b>Title</b></td>
                     <td>
                       <div class="form-group mb-0">
-                        <input type="text" name="title" class="form-control">
+                        <input type="text" name="title" class="form-control"
+                        value="{{ request()->get('title') }}">
                       </div>
                     </td>
                   </tr>
@@ -27,7 +28,8 @@
                     <td><b>Body</b></td>
                     <td>
                       <div class="form-group mb-0">
-                        <input type="text" name="message" class="form-control">
+                        <input type="text" name="message" class="form-control"
+                        value="{{ request()->get('message') }}">
                       </div>
                     </td>
                   </tr>
@@ -39,17 +41,20 @@
                     <td width="80"><b>Image</b></td>
                     <td width="60">
                       <label class="radio-inline">
-                        <input type="radio" name="imageOption" id="inlineRadio1" value="with"> with
+                        <input type="radio" name="imageOption" id="inlineRadio1" value="with"
+                        {{ request()->get('imageOption') == 'with' ? "checked" : ""}}> with
                       </label>
                     </td>
                     <td width="80">
                       <label class="radio-inline">
-                        <input type="radio" name="imageOption" id="inlineRadio2" value="without"> without
+                        <input type="radio" name="imageOption" id="inlineRadio2" value="without"
+                        {{ request()->get('imageOption') == 'without' ? "checked" : ""}}> without
                       </label>
                     </td>
                     <td>
                       <label class="radio-inline">
-                        <input type="radio" name="imageOption" id="inlineRadio3" value="null" checked> unspecified
+                        <input type="radio" name="imageOption" id="inlineRadio3" value=""
+                        {{ empty(request()->get('imageOption')) ? "checked" : ""}}> unspecified
                       </label>
                     </td>
                   </tr>
@@ -57,17 +62,21 @@
                     <td width="80"><b>Status</b></td>
                     <td>
                       <label class="radio-inline">
-                        <input type="radio" name="statusOption" id="inlineRadio1" value="on"> on
+                      <input type="radio" name="statusOption" id="inlineRadio1" value="on" 
+                      {{ request()->get('statusOption') == 'on' ? "checked" : ""}}> on
                       </label>
                     </td>
                     <td>
                       <label class="radio-inline">
-                        <input type="radio" name="statusOption" id="inlineRadio2" value="delete"> delete
+                        <input type="radio" name="statusOption" id="inlineRadio2" value="delete"
+                        {{ request()->get('statusOption') == 'delete' ? "checked" : ""}}> delete
                       </label>
                     </td>
                     <td>
                       <label class="radio-inline">
-                        <input type="radio" name="statusOption" id="inlineRadio3" value="null" checked> unspecified
+                        <input type="radio" name="statusOption" id="inlineRadio3" value=""
+                        {{ empty(request()->get('statusOption')) ? "checked" : ""}}>
+                        unspecified
                       </label>
                     </td>
                   </tr>
@@ -192,6 +201,7 @@
           boxes[i].checked = source.checked;
         }
       }
+      alert("{{ request()->get('statusOption') }}")
 </script>
 @if (Session::has('bruh'))
 <script>
