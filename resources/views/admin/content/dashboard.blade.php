@@ -148,7 +148,7 @@
           <a id="deleteCheck" href="#" onclick="destroyMultiple()" class="btn btn-default mt-5" data-toggle="modal"
             data-target="#deleteModal">Delete Checked Items</a>
           <div class="text-center">
-            {{ $boards->links() }}
+            {{ $boards->appends(Request::except('page'))->links() }}
           </div>
           @else
           <p style="font-size:3em; text-align:center; padding:20px;">No Data Found</p>
