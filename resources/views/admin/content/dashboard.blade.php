@@ -118,7 +118,7 @@
                     file_exists('storage/' . $board->getImageFolder() . 'thumbnail/' . $board->image))
                     <img class="img-prev" style="width:130px"
                       src="{{ url('storage/' . $board->getImageFolder() . 'thumbnail/' . $board->image) }}" alt="image">
-                    <a id="deleteImage" onclick="destroyImage()" href="#" data-toggle="modal" data-target="#deleteModal"
+                    <a id="deleteImage" onclick="destroyImage({{ $board->id }})" href="#" data-toggle="modal" data-target="#deleteModal"
                       data-id="{{ $board->id }}" class="btn btn-danger ml-10 btn-img" rel="tooltip"
                       title="Delete Image">
                       <i class="fa fa-trash"></i>
@@ -135,7 +135,7 @@
                       <i class="fa fa-repeat"></i>
                     </button></td>
                   @else
-                  <td><a id="delete" onclick="destroy()" href="#" data-id="{{ $board->id }}" data-toggle="modal"
+                  <td><a id="delete" onclick="destroy({{ $board->id }})" href="#" data-toggle="modal"
                       data-target="#deleteModal" class="btn btn-danger" rel="tooltip" title="Delete">
                       <i class="fa fa-trash"></i>
                     </a></td>
@@ -173,8 +173,7 @@
       };
       
       // DISPLAY MODAL WITH FORM ACTION
-      function destroyImage() {
-        id = document.getElementById("deleteImage").dataset.id;
+      function destroyImage(id) {
         table = document.getElementById("formTable");
         table.action = "dashboard/destroy/image/" + id;
       }
@@ -183,8 +182,7 @@
           document.getElementById("formTable").submit();
       }
 
-      function destroy() {
-        id = document.getElementById("delete").dataset.id;
+      function destroy(id) {
         table = document.getElementById("formTable");
         table.action = "dashboard/destroy/" + id;
       }
